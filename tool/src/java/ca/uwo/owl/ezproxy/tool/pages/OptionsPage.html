@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+
+<body>
+<wicket:extend>
+	<div class="portletBody">
+		<h3 wicket:id="heading">[heading goes here]</h3>
+		
+		<form wicket:id="configureEZProxyLinkForm" name="customizeForm">
+			<p class="shorttext indnt1">
+				<span class="reqStar">*</span>
+				<label for="toolTitle" wicket:id="toolTitleLabel">[title label goes here]</label>
+				<input type="text" id="toolTitle" name="toolTitle" wicket:id="txtToolTitle" maxlength="99" />
+				<br />
+			</p>
+			
+			<p class="shorttext indnt1">
+				<span class="reqStar">*</span>
+				<label for="pageTitle" wicket:id="pageTitleLabel">[page title label goes here]</label>
+				<input type="text" id="pageTitle" name="pageTitle" wicket:id="txtPageTitle" maxlength="99" />
+			</p>
+			
+			<p class="shorttext indnt1">
+				<label for="frameHeight" wicket:id="frameHeightLabel">[frame height label goes here]</label>
+				<select wicket:id="ddFrameHeight" id="frameHeight" name="frameHeight" />
+				<br />
+			</p>
+			
+			<div wicket:id="holder">
+			<p id="customNumber" class="shorttext" style="display: block;" wicket:id="container">
+				<span class="reqStar">*</span>
+				<label for="customHeight" wicket:id="customHeightLabel">[custom height label goes here]</label>
+				<input type="text" id="customHeight" name="customHeight" wicket:id="txtCustomHeight" 
+					size="4" maxlength="4" />
+				<span wicket:id="customHeightUnitLabel">[custom height unit label goes here]</span>
+				<br />
+			</p>
+			</div>
+			
+			<p class="shorttext indnt1">
+				<label for="sourceURL" wicket:id="sourceURLLabel">[source url label goes here]</label>
+				<input type="text" id="sourceURL" name="sourceURL" wicket:id="txtSourceURL" size="40" />
+				<br />
+			</p>
+			
+			<p class="checkbox labelindnt">
+				<input type="checkbox" id="newWindow" name="newWindow" wicket:id="chkNewWindow" class="indnt1" />
+				<label for="newWindow" wicket:id="newWindowLabel">[new window label goes here]</label>
+				<br />
+			</p>
+			
+			<p class="act">
+				<input type="submit" name="update" id="update" wicket:id="btnUpdate" accesskey="s" class="active" />
+				<input type="submit" name="cancel" id="cancel" wicket:id="btnCancel" accesskey="x" />
+			</p>
+		</form>
+	</div>	
+</wicket:extend>
+</body>
+</html>
