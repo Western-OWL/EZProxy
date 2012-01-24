@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<!--  SakaiProxy -->
+ 	<bean id="ca.uwo.owl.ezproxy.logic.SakaiProxy"
+    	class="ca.uwo.owl.ezproxy.logic.SakaiProxyImpl"
+        init-method="init">
+        
+        <!-- API injection -->
+        <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService" />
+        <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+        <property name="toolManager" ref="org.sakaiproject.tool.api.ToolManager" />
+        <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
+		<property name="eventTrackingService" ref="org.sakaiproject.event.api.EventTrackingService" />
+		<property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService" />
+		<property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
+		<property name="functionManager" ref="org.sakaiproject.authz.api.FunctionManager" />
+		
+	</bean>
+	
+	<!-- ProjectLogic -->
+	<bean id="ca.uwo.owl.ezproxy.logic.EZProxyLogic"
+    	class="ca.uwo.owl.ezproxy.logic.EZProxyLogicImpl"
+    	init-method="init">
+    	
+    	<property name="dao" ref="ca.uwo.owl.ezproxy.dao.EZProxyDao" />
+    	
+    </bean>
+    
+    <!-- DAO. This uses the DataSource that has already been setup by Sakai  -->
+	<bean id="ca.uwo.owl.ezproxy.dao.EZProxyDao"
+		class="ca.uwo.owl.ezproxy.dao.impl.EZProxyDaoImpl"
+		init-method="init">
+		<property name="jdbcTemplate">
+			<bean class="org.springframework.jdbc.core.JdbcTemplate">
+				<constructor-arg type="javax.sql.DataSource">
+					<ref bean="javax.sql.DataSource" />
+				</constructor-arg>
+			</bean>
+		</property>	
+	</bean>
+
+</beans>
