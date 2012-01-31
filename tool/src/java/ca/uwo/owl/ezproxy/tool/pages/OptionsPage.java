@@ -18,9 +18,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.RangeValidator;
-import org.sakaiproject.component.cover.ServerConfigurationService;
 
 import ca.uwo.owl.ezproxy.model.EZProxyEntry;
 import ca.uwo.owl.ezproxy.tool.model.EZProxyInputModel;
@@ -38,7 +36,6 @@ public class OptionsPage extends BasePage
 	private static final Logger log 				= Logger.getLogger( OptionsPage.class );	// The logger
 	private static final int 	MIN_CUSTOM_HEIGHT 	= 20;										// The minimum value allowed for custom frame height
 	private static final int 	MAX_CUSTOM_HEIGHT 	= 9999;										// The maximum value allowed for custom frame height
-	private static final String supportEmail 	  	= ServerConfigurationService.getString( "ezproxy.email" );	// The support email address
 	
 	// Constructor
 	public OptionsPage() 
@@ -47,29 +44,29 @@ public class OptionsPage extends BasePage
 		disableLink( optionsLink );
 		final String siteID = sakaiProxy.getCurrentSiteId();
 		final String pageID = sakaiProxy.getCurrentPageId();
-		String toolTitle = ezProxyLogic.getToolTitle( siteID, pageID );
-		String pageTitle = ezProxyLogic.getPageTitle( siteID, pageID );
+		String toolTitle = sakaiProxy.getToolTitle();
+		String pageTitle = sakaiProxy.getPageTitle( siteID, pageID );
 		boolean ableToConfig = sakaiProxy.isCurrentUserConfigAuth();
 		
 		// Get the EZProxyEntries
 		boolean firstRunCheck = false;
-		List<EZProxyEntry> entries = ezProxyLogic.getEZProxyEntry( siteID, pageID );
+		List<EZProxyEntry> entries = sakaiProxy.getEZProxyEntry( siteID, pageID );
 		String frameHeight = null;
 		String customHeight = null;
 		String url = null;
 		String newWindow = null;
-		if( entries != null && !entries.isEmpty() )
+		if( entries != null && entries.size() == NUM_ENTRIES_PER_LINK )
 		{
 			// Get the values
 			for( EZProxyEntry e : entries )
 			{
-				if( "frameHeight".equalsIgnoreCase( e.getName() ) )
+				if( "ezproxy.frameHeight".equalsIgnoreCase( e.getName() ) )
 					frameHeight = e.getValue();
-				else if( "customHeight".equalsIgnoreCase( e.getName() ) )
+				else if( "ezproxy.customHeight".equalsIgnoreCase( e.getName() ) )
 					customHeight = e.getValue();
-				else if( "sourceURL".equalsIgnoreCase( e.getName() ) )
+				else if( "ezproxy.sourceURL".equalsIgnoreCase( e.getName() ) )
 					url = e.getValue();
-				else if( "newWindow".equalsIgnoreCase( e.getName() ) )
+				else if( "ezproxy.newWindow".equalsIgnoreCase( e.getName() ) )
 					newWindow = e.getValue();
 			}
 		}
@@ -166,7 +163,7 @@ public class OptionsPage extends BasePage
 		
 		// Add the source url label and input
 		configForm.add( new Label( "sourceURLLabel", new ResourceModel( "url" ) ) );
-		configForm.add( new RequiredTextField<String>( "txtSourceURL" ).add( 
+		configForm.add( new RequiredTextField<String>( "txtSourceURL" ).setRequired( true ).add( 
 				( url != null && !url.isEmpty() ) 						// If...
 				? new SimpleAttributeModifier( "value", url )			// True...
 				: new SimpleAttributeModifier( "value", "http://" ) ) );// False...
@@ -194,54 +191,37 @@ public class OptionsPage extends BasePage
 				model.setDdFrameHeight( ddModel.getObject() );
 				
 				// Update the tool title and page title
-				ezProxyLogic.updateToolTitle( siteID, pageID, model.getTxtToolTitle() );
-				ezProxyLogic.updatePageTitle( siteID, pageID, model.getTxtPageTitle() );
+				sakaiProxy.setToolTitle( siteID, pageID, sakaiProxy.getToolTitle(), model.getTxtToolTitle() );
+				sakaiProxy.setPageTitle( siteID, pageID, model.getTxtPageTitle() );
 				
 				// Make sure the source URL has protocol
 				if( !model.getTxtSourceURL().startsWith( "http://" ) && !model.getTxtSourceURL().startsWith( "https://") )
 					model.setTxtSourceURL( "http://" + model.getTxtSourceURL() );
 				
-				// If it's the first time this EZProxy link has been configured, insert the values into the database
-				if( firstRun )
-				{
-					// Set the siteID and pageID
-					EZProxyEntry e = new EZProxyEntry();
-					e.setSiteID( siteID );
-					e.setPageID( pageID );
-					
-					// Frame height
-					e.setName( "frameHeight" );
-					e.setValue( model.getDdFrameHeight() );
-					postErrorMsg( ezProxyLogic.addEZProxyEntry( e ), e.getName(), e.getValue() );
-					
-					// Custom height
-					e.setName( "customHeight" );
-					e.setValue( model.getTxtCustomHeight() );
-					postErrorMsg( ezProxyLogic.addEZProxyEntry( e ), e.getName(), e.getValue() );
-					
-					// URL
-					e.setName( "sourceURL" );
-					e.setValue( model.getTxtSourceURL() );
-					postErrorMsg( ezProxyLogic.addEZProxyEntry( e ), e.getName(), e.getValue() );
-					
-					// New window
-					e.setName( "newWindow" );
-					e.setValue( model.getChkNewWindow().toString() );
-					postErrorMsg( ezProxyLogic.addEZProxyEntry( e ), e.getName(), e.getValue() );
-				}
+				// Set the siteID and pageID
+				EZProxyEntry e = new EZProxyEntry();
+				e.setSiteID( siteID );
+				e.setPageID( pageID );
 				
-				// Otherwise, update the existing records in the database
-				else
-				{
-					postErrorMsg( ezProxyLogic.updateEZProxyEntry( model.getDdFrameHeight(), siteID, pageID, "frameHeight" ), 
-							"frameHeight", model.getDdFrameHeight() );
-					postErrorMsg( ezProxyLogic.updateEZProxyEntry( model.getTxtCustomHeight(), siteID, pageID, "customHeight" ), 
-							"customHeight", model.getTxtCustomHeight() );
-					postErrorMsg( ezProxyLogic.updateEZProxyEntry( model.getTxtSourceURL(), siteID, pageID, "sourceURL" ), 
-							"sourceURL", model.getTxtSourceURL() );
-					postErrorMsg( ezProxyLogic.updateEZProxyEntry( model.getChkNewWindow().toString(), siteID, pageID, "newWindow" ), 
-							"newWindow", model.getChkNewWindow().toString() );
-				}
+				// Frame height
+				e.setName( "ezproxy.frameHeight" );
+				e.setValue( model.getDdFrameHeight() );
+				sakaiProxy.setEZProxyEntry( e );
+				
+				// Custom height
+				e.setName( "ezproxy.customHeight" );
+				e.setValue( model.getTxtCustomHeight() );
+				sakaiProxy.setEZProxyEntry( e );
+				
+				// URL
+				e.setName( "ezproxy.sourceURL" );
+				e.setValue( model.getTxtSourceURL() );
+				sakaiProxy.setEZProxyEntry( e );
+				
+				// New window
+				e.setName( "ezproxy.newWindow" );
+				e.setValue( model.getChkNewWindow().toString() );
+				sakaiProxy.setEZProxyEntry( e );
 				
 				// Return to the content page
 				setResponsePage( ContentPage.class );
@@ -269,16 +249,5 @@ public class OptionsPage extends BasePage
 		if( !ableToConfig )
 			configForm.setVisibilityAllowed( false );
 		add( configForm );
-	}
-	
-	/**
-	 * If an operation was not successful, post an error message to the feedback panel
-	 * indicating the field and value that were not able to be saved/updated.
-	 *
-	 */
-	private void postErrorMsg( boolean success, String field, String value )
-	{
-		if( !success )
-			super.feedbackPanel.error( new StringResourceModel( "failure", null, new Object[]{ field, value, supportEmail } ) );
 	}
 }

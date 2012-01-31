@@ -1,5 +1,9 @@
 package ca.uwo.owl.ezproxy.logic;
 
+import java.util.List;
+
+import ca.uwo.owl.ezproxy.model.EZProxyEntry;
+
 /**
  * An interface to abstract all Sakai related API calls in a central method that can be injected into our app.
  * 
@@ -9,10 +13,58 @@ package ca.uwo.owl.ezproxy.logic;
 public interface SakaiProxy
 {
 	/**
+	 * Get the tool title of the current tool (ezproxy)
+	 * @param siteID the ID of the site in question
+	 * @param pageID the ID of the page in question
+	 * @param oldToolTitle the old title of the tool
+	 * @param newToolTitle the new title of the tool to be set
+	 * @return
+	 */
+	public void setToolTitle( String siteID, String pageID, String oldToolTitle, String newToolTitle );
+	
+	/**
+	 * Get the tool title of the current tool (ezproxy)
+	 * @return
+	 */
+	public String getToolTitle();
+	
+	/**
+	 * Get the page title of the given site+page
+	 * @param siteID the ID of the site in question
+	 * @param pageID the ID of the page in question
+	 * @param newPageTitle the new title of the page to be set
+	 * @return
+	 */
+	public void setPageTitle( String siteID, String pageID, String newPageTitle );
+	
+	/**
+	 * Get the page title of the given site+page
+	 * @param siteID the ID of the site in question
+	 * @param pageID the ID of the page in question
+	 * @return
+	 */
+	public String getPageTitle( String siteID, String pageID );
+	
+	/**
 	 * Determine if the current user has the ability to configure the current EZProxy link
 	 * @return
 	 */
 	public boolean isCurrentUserConfigAuth();
+	
+	/**
+	 * Set an EZProxy entry
+	 * @param entry the EZProxy entry to add/update in the database
+	 * @return
+	 */
+	public void setEZProxyEntry( EZProxyEntry entry );
+	
+	/**
+	 * Get a list of EZProxy entries for the given siteID and pageID
+	 * @param siteID the ID of the site in question
+	 * @param pageID the ID of the page in question
+	 * @return
+	 */
+	public List<EZProxyEntry> getEZProxyEntry( String siteID, String pageID );
 	
 	/**
 	 * Get current siteid

@@ -26,7 +26,6 @@ public class ContentPage extends BasePage implements IHeaderContributor
 {
 	// Class memebers
 	private static final Logger log = Logger.getLogger( ContentPage.class );	// The logger
-	private static final int NUM_ENTRIES_PER_LINK = 4;							// The number of rows per EZProxy link in the database
 	
 	// Instance members
 	boolean isConfigured 	= false;	// Is this EZProxy link configured
@@ -40,7 +39,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 		// Get any generic info needed
 		final String siteID = sakaiProxy.getCurrentSiteId();
 		final String pageID = sakaiProxy.getCurrentPageId();
-		List<EZProxyEntry> entries = ezProxyLogic.getEZProxyEntry( siteID, pageID );
+		List<EZProxyEntry> entries = sakaiProxy.getEZProxyEntry( siteID, pageID );
 		boolean ableToConfig = sakaiProxy.isCurrentUserConfigAuth();
 		
 		// If this EZProxy Link has not yet been setup (has no entries), inform the user
@@ -60,7 +59,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 			// Determine if it was configured for a new window/tab
 			notConfiguredHeading.setVisibilityAllowed( false );
 			for( EZProxyEntry e : entries )
-				if( "newWindow".equalsIgnoreCase( e.getName() ) )
+				if( "ezproxy.newWindow".equalsIgnoreCase( e.getName() ) )
 					if( "true".equalsIgnoreCase( e.getValue() ) )
 						newWindow = true;
 			
@@ -86,7 +85,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 			String destinationURL = "";
 			String mac = "";
 			for( EZProxyEntry e : entries )
-				if( "sourceURL".equalsIgnoreCase( e.getName() ) )
+				if( "ezproxy.sourceURL".equalsIgnoreCase( e.getName() ) )
 					destinationURL = e.getValue();
 			
 			// Make sure the service URL and shared secret were in sakai.properties
@@ -113,9 +112,9 @@ public class ContentPage extends BasePage implements IHeaderContributor
 					String customHeight = "";
 					for( EZProxyEntry e : entries )
 					{
-						if( "frameHeight".equalsIgnoreCase( e.getName() ) )
+						if( "ezproxy.frameHeight".equalsIgnoreCase( e.getName() ) )
 							frameHeight = e.getValue();
-						if( "customHeight".equalsIgnoreCase( e.getName() ) )
+						if( "ezproxy.customHeight".equalsIgnoreCase( e.getName() ) )
 							customHeight = e.getValue();
 					}
 					
