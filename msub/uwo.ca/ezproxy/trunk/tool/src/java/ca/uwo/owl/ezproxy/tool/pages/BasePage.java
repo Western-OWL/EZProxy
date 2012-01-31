@@ -16,7 +16,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import ca.uwo.owl.ezproxy.logic.EZProxyLogic;
 import ca.uwo.owl.ezproxy.logic.SakaiProxy;
 
 
@@ -32,16 +31,13 @@ import ca.uwo.owl.ezproxy.logic.SakaiProxy;
  */
 public class BasePage extends WebPage implements IHeaderContributor
 {
-	// Logger
-	private static final Logger log = Logger.getLogger( BasePage.class ); 
+	// Class members
+	private static final Logger log = Logger.getLogger( BasePage.class );	// The logger 
+	protected static final int NUM_ENTRIES_PER_LINK = 4;					// The number of rows per EZProxy link in the database
 	
 	// Bean that provides access to sakai API
 	@SpringBean( name="ca.uwo.owl.ezproxy.logic.SakaiProxy" )
 	protected SakaiProxy sakaiProxy;
-	
-	// Bean that provides access to EZProxy DAO
-	@SpringBean( name="ca.uwo.owl.ezproxy.logic.EZProxyLogic" )
-	protected EZProxyLogic ezProxyLogic;
 	
 	// The 'Options' link and feedback panel
 	Link<Void> optionsLink;	
