@@ -207,10 +207,10 @@ public class SakaiProxyImpl implements SakaiProxy
 				ResourceProperties props 	= page.getProperties();
 				if( props != null )
 				{
-					frameHeight 				= props.getProperty( "ezproxy.frameHeight" );
-					customHeight 				= props.getProperty( "ezproxy.customHeight" );
-					sourceURL 					= props.getProperty( "ezproxy.sourceURL" );
-					newWindow 					= props.getProperty( "ezproxy.newWindow" );
+					frameHeight 	= props.getProperty( "ezproxy.frameHeight" );
+					customHeight 	= props.getProperty( "ezproxy.customHeight" );
+					sourceURL 		= props.getProperty( "ezproxy.sourceURL" );
+					newWindow 		= props.getProperty( "ezproxy.newWindow" );
 					
 					// Null checks
 					if( frameHeight == null )
