@@ -96,7 +96,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 			if( !propsNotFound )
 			{
 				// Generate the MAC, and the final URL
-				try { mac = SharedSecretAuth.generateMAC( userEid + siteID, sharedSecret ); }
+				try { mac = SharedSecretAuth.generateMAC( userEid + siteID, sharedSecret );	}
 				catch( NoSuchAlgorithmException ex ) { log.error( ex ); }
 				catch( IndexOutOfBoundsException ex ) { log.error( ex ); }
 				finalURL = serviceURL + "?mac=" + mac + "&pid=" + userEid + "&lcid=" + siteID + "&url=" + destinationURL;
