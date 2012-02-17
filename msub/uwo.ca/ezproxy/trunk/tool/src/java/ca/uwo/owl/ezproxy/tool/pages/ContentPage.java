@@ -99,10 +99,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 				try { mac = SharedSecretAuth.generateMAC( userEid + siteID, sharedSecret ); }
 				catch( NoSuchAlgorithmException ex ) { log.error( ex ); }
 				catch( IndexOutOfBoundsException ex ) { log.error( ex ); }
-				StringBuilder b = new StringBuilder();
-				b.append( serviceURL ).append( "?mac=" ).append( mac ).append( "&pid=" ).append( userEid ).append( "&lcid=" )
-					.append( siteID ).append( "&url=" ).append( destinationURL );
-				finalURL = b.toString();
+				finalURL = serviceURL + "?mac=" + mac + "&pid=" + userEid + "&lcid=" + siteID + "&url=" + destinationURL;
 				
 				// If it's configured to open in the iframe...
 				if( !newWindow )
