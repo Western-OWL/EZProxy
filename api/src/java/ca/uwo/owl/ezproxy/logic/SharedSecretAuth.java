@@ -27,7 +27,7 @@ public class SharedSecretAuth
 		// Sum the bytes in the data
 		long sum = 0;
 		for( int i = 0; i < bytes.length; ++i )
-		    sum = bytes[i];
+		    sum += bytes[i];
 	
 		// Combine secret key with the sum to get our message
 		String message = Long.toString( sum ) + secretKey;
