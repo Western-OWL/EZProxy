@@ -2,7 +2,7 @@
 <registration>
 	<tool id="sakai.ezproxy" 
 		title="EZProxy Library Resource Link" 
-		description="This tool provides off-campus access to journals in the library resources (without the need to log in again).">
+		description="EZProxy provides off-campus access to journals in the library resources (without the need to log in again).">
 
 		<!--  This tool will be made available to the following site types via Site Info > Edit Tools -->
 		<category name="course" />
