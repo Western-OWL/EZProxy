@@ -1,4 +1,4 @@
 2012.03.01:
-	[OWL-135] added 'EZProxy' to the description for ease of recognition
+	- [OWL-135] added 'EZProxy' to the description for ease of recognition
 2012.02.07:
 	- [EZP-1] created the EZProxy tool
