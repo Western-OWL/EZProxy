@@ -294,6 +294,8 @@ public class SakaiProxyImpl implements SakaiProxy
 				retVal = true;
 			else if( "faculty".equalsIgnoreCase( type ) )
 				retVal = true;
+			else if( "admin".equalsIgnoreCase( type ) )
+				retVal = true;
 		}
 		
 		return retVal;
