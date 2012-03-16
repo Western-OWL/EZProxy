@@ -41,96 +41,116 @@ public class ContentPage extends BasePage implements IHeaderContributor
 		final String pageID = sakaiProxy.getCurrentPageId();
 		List<EZProxyEntry> entries = sakaiProxy.getEZProxyEntry( siteID, pageID );
 		boolean ableToConfig = sakaiProxy.isCurrentUserConfigAuth();
+		boolean ableToView = sakaiProxy.isCurrentUserViewAuth();
 		
-		// If this EZProxy Link has not yet been setup (has no entries), inform the user
-		Label notConfiguredHeading = new Label( "notConfiguredHeading", 
-				( ableToConfig )												// If...
-				? new ResourceModel( "heading.notConfigured" )					// True...
-				: new ResourceModel( "heading.notConfigured.notAuthorized" ) );	// False...
-		MultiLineLabel configuredPopup = new MultiLineLabel( "configuredPopupHeading", new ResourceModel( "heading.configuredPopup" ) );
-		configuredPopup.setVisibilityAllowed( false );
-		
-		// If there were the right amount of entries returned...
-		if( entries != null && entries.size() == NUM_ENTRIES_PER_LINK )
+		// If the user has the authorization to view an EZProxy link...
+		if( ableToView )
 		{
-			// It has been configured
-			isConfigured = true;
+			// If this EZProxy Link has not yet been setup (has no entries), inform the user
+			Label notConfiguredHeading = new Label( "notConfiguredHeading", 
+					( ableToConfig )												// If...
+					? new ResourceModel( "heading.notConfigured" )					// True...
+					: new ResourceModel( "heading.notConfigured.notAuthorized" ) );	// False...
+			MultiLineLabel configuredPopup = new MultiLineLabel( "configuredPopupHeading", new ResourceModel( "heading.configuredPopup" ) );
+			configuredPopup.setVisibilityAllowed( false );
 			
-			// Determine if it was configured for a new window/tab
-			notConfiguredHeading.setVisibilityAllowed( false );
-			for( EZProxyEntry e : entries )
-				if( "ezproxy.newWindow".equalsIgnoreCase( e.getName() ) )
-					if( "true".equalsIgnoreCase( e.getValue() ) )
-						newWindow = true;
-			
-			// If it's a new window link, show the info label
-			if( newWindow )
-				configuredPopup.setVisibilityAllowed( true );
-		}
-		
-		// Add the labels and Iframe component
-		add( notConfiguredHeading );
-		add( configuredPopup );
-		WebMarkupContainer iframe = new WebMarkupContainer( "iframe" );
-		iframe.setVisibilityAllowed( false );
-		add( iframe );
-		
-		// If the link has been configured...
-		if( isConfigured )
-		{
-			// Get all the necessary pieces of info
-			String serviceURL = ServerConfigurationService.getString( "ezproxy.url" );
-			String sharedSecret = ServerConfigurationService.getString( "ezproxy.secret" );
-			String userEid = sakaiProxy.getCurrentUserEid();
-			String destinationURL = "";
-			String mac = "";
-			for( EZProxyEntry e : entries )
-				if( "ezproxy.sourceURL".equalsIgnoreCase( e.getName() ) )
-					destinationURL = e.getValue();
-			
-			// Make sure the service URL and shared secret were in sakai.properties
-			if( serviceURL != null && !serviceURL.isEmpty() && sharedSecret != null && !sharedSecret.isEmpty() )
-				propsNotFound = false;
-			
-			// If the properties were there, continue...
-			if( !propsNotFound )
+			// If there were the right amount of entries returned...
+			if( entries != null && entries.size() == NUM_ENTRIES_PER_LINK )
 			{
-				// Generate the MAC, and the final URL
-				try { mac = SharedSecretAuth.generateMAC( userEid + siteID, sharedSecret );	}
-				catch( NoSuchAlgorithmException ex ) { log.error( ex ); }
-				catch( IndexOutOfBoundsException ex ) { log.error( ex ); }
-				finalURL = serviceURL + "?mac=" + mac + "&pid=" + userEid + "&lcid=" + siteID + "&url=" + destinationURL;
+				// It has been configured
+				isConfigured = true;
 				
-				// If it's configured to open in the iframe...
-				if( !newWindow )
+				// Determine if it was configured for a new window/tab
+				notConfiguredHeading.setVisibilityAllowed( false );
+				for( EZProxyEntry e : entries )
+					if( "ezproxy.newWindow".equalsIgnoreCase( e.getName() ) )
+						if( "true".equalsIgnoreCase( e.getValue() ) )
+							newWindow = true;
+				
+				// If it's a new window link, show the info label
+				if( newWindow )
+					configuredPopup.setVisibilityAllowed( true );
+			}
+			
+			// Add the labels and Iframe component
+			add( notConfiguredHeading );
+			add( configuredPopup );
+			WebMarkupContainer iframe = new WebMarkupContainer( "iframe" );
+			iframe.setVisibilityAllowed( false );
+			add( iframe );
+			
+			// If the link has been configured...
+			if( isConfigured )
+			{
+				// Get all the necessary pieces of info
+				String serviceURL = ServerConfigurationService.getString( "ezproxy.url" );
+				String sharedSecret = ServerConfigurationService.getString( "ezproxy.secret" );
+				String userEid = sakaiProxy.getCurrentUserEid();
+				String destinationURL = "";
+				String mac = "";
+				for( EZProxyEntry e : entries )
+					if( "ezproxy.sourceURL".equalsIgnoreCase( e.getName() ) )
+						destinationURL = e.getValue();
+				
+				// Make sure the service URL and shared secret were in sakai.properties
+				if( serviceURL != null && !serviceURL.isEmpty() && sharedSecret != null && !sharedSecret.isEmpty() )
+					propsNotFound = false;
+				
+				// If the properties were there, continue...
+				if( !propsNotFound )
 				{
-					// Get the frame height and custom height values
-					String frameHeight = "";
-					String customHeight = "";
-					for( EZProxyEntry e : entries )
-					{
-						if( "ezproxy.frameHeight".equalsIgnoreCase( e.getName() ) )
-							frameHeight = e.getValue();
-						if( "ezproxy.customHeight".equalsIgnoreCase( e.getName() ) )
-							customHeight = e.getValue();
-					}
+					// Generate the MAC, and the final URL
+					try { mac = SharedSecretAuth.generateMAC( userEid + siteID, sharedSecret );	}
+					catch( NoSuchAlgorithmException ex ) { log.error( ex ); }
+					catch( IndexOutOfBoundsException ex ) { log.error( ex ); }
+					finalURL = serviceURL + "?mac=" + mac + "&pid=" + userEid + "&lcid=" + siteID + "&url=" + destinationURL;
 					
-					// Setup the iframe; 'frameHeight.option9' = 'Something else', which means the user provided a custom height
-					iframe.setVisibilityAllowed( true );
-					iframe.add( new SimpleAttributeModifier( "src", finalURL ) );
-					iframe.add( new SimpleAttributeModifier( "height", 
-							( new ResourceModel( "frameHeight.option9" ).getObject().equalsIgnoreCase( frameHeight ) ) 	// If... (frameHeight.option9 = 'Something else')
-							? customHeight 																				// True...
-							: frameHeight ) );																			// False...
+					// If it's configured to open in the iframe...
+					if( !newWindow )
+					{
+						// Get the frame height and custom height values
+						String frameHeight = "";
+						String customHeight = "";
+						for( EZProxyEntry e : entries )
+						{
+							if( "ezproxy.frameHeight".equalsIgnoreCase( e.getName() ) )
+								frameHeight = e.getValue();
+							if( "ezproxy.customHeight".equalsIgnoreCase( e.getName() ) )
+								customHeight = e.getValue();
+						}
+						
+						// Setup the iframe; 'frameHeight.option9' = 'Something else', which means the user provided a custom height
+						iframe.setVisibilityAllowed( true );
+						iframe.add( new SimpleAttributeModifier( "src", finalURL ) );
+						iframe.add( new SimpleAttributeModifier( "height", 
+								( new ResourceModel( "frameHeight.option9" ).getObject().equalsIgnoreCase( frameHeight ) ) 	// If... (frameHeight.option9 = 'Something else')
+								? customHeight 																				// True...
+								: frameHeight ) );																			// False...
+					}
+				}
+				
+				// Otherwise, notify the user that the properties were missing in sakai.properties
+				else
+				{
+					configuredPopup = new MultiLineLabel( "configuredPopupHeading", new ResourceModel( "heading.propsNotFound" ) );
+					replace( configuredPopup );
 				}
 			}
+		}
+		
+		// Otherwise, the user does not have the authority to view (or configure) EZProxy links
+		else
+		{
+			// Generate the appropriate labels
+			Label notConfiguredHeading = new Label( "notConfiguredHeading", new ResourceModel( "heading.notAuthorized" ) );
+			MultiLineLabel configuredPopup = new MultiLineLabel( "configuredPopupHeading", new ResourceModel( "heading.notAutorized.view" ) );
 			
-			// Otherwise, notify the user that the properties were missing in sakai.properties
-			else
-			{
-				configuredPopup = new MultiLineLabel( "configuredPopupHeading", new ResourceModel( "heading.propsNotFound" ) );
-				replace( configuredPopup );
-			}
+			// Add the labels and Iframe component
+			add( notConfiguredHeading );
+			add( configuredPopup );
+			WebMarkupContainer iframe = new WebMarkupContainer( "iframe" );
+			iframe.setVisibilityAllowed( false );
+			add( iframe );
 		}
 	}
 	

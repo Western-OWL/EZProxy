@@ -281,6 +281,27 @@ public class SakaiProxyImpl implements SakaiProxy
 	/**
  	* {@inheritDoc}
  	*/
+	public boolean isCurrentUserViewAuth()
+	{
+		boolean retVal = false ;
+		String type = getCurrentUserType();
+		log.info( "************* type = " + type + " *************" );
+		if( type != null )
+		{
+			if( "student".equalsIgnoreCase( type ) )
+				retVal = true;
+			else if( "staff".equalsIgnoreCase( type ) )
+				retVal = true;
+			else if( "faculty".equalsIgnoreCase( type ) )
+				retVal = true;
+		}
+		
+		return retVal;
+	}
+	
+	/**
+ 	* {@inheritDoc}
+ 	*/
 	public boolean isCurrentUserConfigAuth()
 	{
 		return securityService.unlock( getCurrentUserId(), TOOL_PERM_NAME, siteService.siteReference( getCurrentSiteId() ) );
