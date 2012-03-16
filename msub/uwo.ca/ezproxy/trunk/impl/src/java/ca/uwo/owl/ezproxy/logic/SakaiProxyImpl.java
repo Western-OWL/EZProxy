@@ -285,7 +285,7 @@ public class SakaiProxyImpl implements SakaiProxy
 	{
 		boolean retVal = false ;
 		String type = getCurrentUserType();
-		log.info( "************* type = " + type + " *************" );
+
 		if( type != null )
 		{
 			if( "student".equalsIgnoreCase( type ) )
