@@ -13,6 +13,13 @@ import ca.uwo.owl.ezproxy.model.EZProxyEntry;
 public interface SakaiProxy
 {
 	/**
+	 * Determine if the current user should be able to view the EZProxy link.
+	 * Only student, staff, and faculty members are able to view EZProxy links.
+	 * @return
+	 */
+	public boolean isCurrentUserViewAuth();
+	
+	/**
 	 * Get the tool title of the current tool (ezproxy)
 	 * @param siteID the ID of the site in question
 	 * @param pageID the ID of the page in question
