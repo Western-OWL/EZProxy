@@ -136,6 +136,10 @@ public class ContentPage extends BasePage implements IHeaderContributor
 					replace( configuredPopup );
 				}
 			}
+			
+			// If the link has not been configured, AND they have the permission to configure it; force them to the config page
+			else if( !isConfigured && ableToConfig )
+				this.setResponsePage( OptionsPage.class );
 		}
 		
 		// Otherwise, the user does not have the authority to view (or configure) EZProxy links
