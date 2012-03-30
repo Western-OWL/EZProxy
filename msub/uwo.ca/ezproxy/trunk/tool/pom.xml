@@ -6,7 +6,7 @@
 	<parent>
     <artifactId>ezproxy</artifactId>
     <groupId>ca.uwo.owl</groupId>
-    <version>1.0</version>
+    <version>1.0.1</version>
   </parent>
 	
 	<name>ezproxy - Tool</name>
@@ -47,6 +47,10 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
 		</dependency>
 		
 		<!-- Sakai dependencies -->
