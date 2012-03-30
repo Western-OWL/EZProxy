@@ -3,9 +3,11 @@ package ca.uwo.owl.ezproxy.tool.pages;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -47,6 +49,10 @@ public class OptionsPage extends BasePage
 		String toolTitle = sakaiProxy.getToolTitle();
 		String pageTitle = sakaiProxy.getPageTitle( siteID, pageID );
 		boolean ableToConfig = sakaiProxy.isCurrentUserConfigAuth();
+		
+		// Create a list of valid protocols for URL validation, create the URL validator object
+		String[] schemes = { "http", "https" };
+		final UrlValidator urlValidator = new UrlValidator( schemes );
 		
 		// Get the EZProxyEntries
 		boolean firstRunCheck = false;
@@ -158,15 +164,17 @@ public class OptionsPage extends BasePage
 			container.setVisibilityAllowed( false );
 		}
 		container.add( new Label( "customHeightUnitLabel", new ResourceModel( "frameHeight.custom.unit" ) ) ); // unit is pixels
-		holder.add( container) ;
+		holder.add( container );
 		configForm.add( holder );
 		
 		// Add the source url label and input
 		configForm.add( new Label( "sourceURLLabel", new ResourceModel( "url" ) ) );
-		configForm.add( new RequiredTextField<String>( "txtSourceURL" ).setRequired( true ).add( 
-				( url != null && !url.isEmpty() ) 						// If...
+		RequiredTextField<String> urlField = new RequiredTextField<String>( "txtSourceURL" );
+		urlField.setRequired( true );
+		urlField.add( ( url != null && !url.isEmpty() ) 				// If...
 				? new SimpleAttributeModifier( "value", url )			// True...
-				: new SimpleAttributeModifier( "value", "http://" ) ) );// False...
+				: new SimpleAttributeModifier( "value", "http://" ) );	// False...
+		configForm.add( urlField );
 		
 		// Add the new window input and label
 		CheckBox chk = new CheckBox( "chkNewWindow" );
@@ -179,7 +187,10 @@ public class OptionsPage extends BasePage
 		configForm.add( new Label( "newWindowLabel", new ResourceModel( "newWindow" ) ) );
 		
 		// Add the update button
-		Button btnUpdate = new Button( "btnUpdate" )
+		final WebMarkupContainer buttonHolder = new WebMarkupContainer( "buttonHolder" );
+		buttonHolder.setOutputMarkupId( true );
+		configForm.add( buttonHolder );
+		final Button btnUpdate = new Button( "btnUpdate" )
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -193,10 +204,6 @@ public class OptionsPage extends BasePage
 				// Update the tool title and page title
 				sakaiProxy.setToolTitle( siteID, pageID, sakaiProxy.getToolTitle(), model.getTxtToolTitle() );
 				sakaiProxy.setPageTitle( siteID, pageID, model.getTxtPageTitle() );
-				
-				// Make sure the source URL has protocol
-				if( !model.getTxtSourceURL().startsWith( "http://" ) && !model.getTxtSourceURL().startsWith( "https://") )
-					model.setTxtSourceURL( "http://" + model.getTxtSourceURL() );
 				
 				// Set the siteID and pageID
 				EZProxyEntry e = new EZProxyEntry();
@@ -228,7 +235,11 @@ public class OptionsPage extends BasePage
 			}
 		};
 		btnUpdate.add( new SimpleAttributeModifier( "value", new ResourceModel( "update" ).getObject() ) );
-		configForm.add( btnUpdate );
+		if( urlValidator.isValid( url ) )
+			btnUpdate.setEnabled( true );
+		else
+			btnUpdate.setEnabled( false );
+		buttonHolder.add( btnUpdate );
 		
 		// Add the cancel button
 		Button btnCancel = new Button( "btnCancel" )
@@ -243,7 +254,32 @@ public class OptionsPage extends BasePage
 		};
 		btnCancel.setDefaultFormProcessing( false );
 		btnCancel.add( new SimpleAttributeModifier( "value", new ResourceModel( "cancel" ).getObject() ) );
-		configForm.add( btnCancel );
+		buttonHolder.add( btnCancel );
+		
+		// Add the onchange AJAX behaviour to the URL text field
+		
+		urlField.add( new OnChangeAjaxBehavior()
+		{
+			private static final long serialVersionUID = -8344894283071902526L;
+
+			@Override
+			protected void onUpdate( AjaxRequestTarget target )
+			{
+				// Get the modified model
+				EZProxyInputModel model = (EZProxyInputModel) configForm.getModelObject();
+				
+				// If the source URL is valid, enable the update button
+				if( urlValidator.isValid( model.getTxtSourceURL() ) )
+					btnUpdate.setEnabled( true );
+				
+				// Otherwise, the source URL is not valid, disable the update button
+				else
+					btnUpdate.setEnabled( false );
+				
+				// Re-render the component
+				target.addComponent( buttonHolder );
+			}
+		} );
 		
 		// Add the form to the page (hide the form if the user is not authorized to configure the EZProxy Link)
 		if( !ableToConfig )

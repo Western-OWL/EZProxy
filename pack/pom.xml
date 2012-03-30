@@ -4,7 +4,7 @@
 	<parent>
     <artifactId>ezproxy</artifactId>
     <groupId>ca.uwo.owl</groupId>
-    <version>1.0</version>
+    <version>1.0.1</version>
   </parent>
 	
 	<name>ezproxy - Components</name>
