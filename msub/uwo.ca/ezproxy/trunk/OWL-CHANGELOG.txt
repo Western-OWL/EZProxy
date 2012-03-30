@@ -1,3 +1,7 @@
+2012.03.30:
+	- [OWL-172] change the EZProxy config page so that the update button is disabled if the URL is not valid
+	- [OWL-174] added URL validation to the options page
+	- incremened to v1.0.1
 2012.03.28:
 	- [OWL-168] force user to config page if link has not been configured and they have permission to do so
 2012.03.01:
