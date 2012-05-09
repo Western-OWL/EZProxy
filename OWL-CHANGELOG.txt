@@ -1,3 +1,6 @@
+2012.05.09:
+	- [EZP-17] invalid URLs no longer accepted
+	- [EZP-16] allowed roles to view EZProxy links moved to sakai.properties
 2012.03.30:
 	- [EZP-11] change the EZProxy config page so that the update button is disabled if the URL is not valid
 	- [EZP-12] added URL validation to the options page
