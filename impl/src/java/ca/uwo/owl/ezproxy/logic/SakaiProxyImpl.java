@@ -33,8 +33,9 @@ import ca.uwo.owl.ezproxy.model.EZProxyEntry;
 public class SakaiProxyImpl implements SakaiProxy
 {
 	// Class members
-	private static final Logger log 			= Logger.getLogger( SakaiProxyImpl.class );	// The logger
-	private static final String TOOL_PERM_NAME 	= "ezproxy.configure";	// The name of the permission used to determine access to EZProxy link configuration page
+	private static final Logger 	log 			= Logger.getLogger( SakaiProxyImpl.class );	// The logger
+	private static final String 	TOOL_PERM_NAME 	= "ezproxy.configure";	// The name of the permission used to determine access to EZProxy link configuration page
+	private static List<String> 	allowedRoles 	= new ArrayList<String>();
 	
 	/**
  	* {@inheritDoc}
@@ -284,19 +285,11 @@ public class SakaiProxyImpl implements SakaiProxy
 	public boolean isCurrentUserViewAuth()
 	{
 		boolean retVal = false ;
-		String type = getCurrentUserType();
+		String type = getCurrentUserType().toLowerCase();
 
 		if( type != null )
-		{
-			if( "student".equalsIgnoreCase( type ) )
+			if( allowedRoles.contains( type ) )
 				retVal = true;
-			else if( "staff".equalsIgnoreCase( type ) )
-				retVal = true;
-			else if( "faculty".equalsIgnoreCase( type ) )
-				retVal = true;
-			else if( "admin".equalsIgnoreCase( type ) )
-				retVal = true;
-		}
 		
 		return retVal;
 	}
@@ -419,6 +412,12 @@ public class SakaiProxyImpl implements SakaiProxy
 		
 		// Register the EZProxy configuration permission
 		functionManager.registerFunction( TOOL_PERM_NAME );
+		
+		// Get the list of allowed system roles to view an ezproxy link
+		allowedRoles = new ArrayList<String>();
+		int count = serverConfigurationService.getInt( "ezproxy.allow.view.count", 0 );
+		for( int i = 1; i <= count; ++i )
+			allowedRoles.add( serverConfigurationService.getString( "ezproxy.allow.view." + i ).toLowerCase() );
 	}
 	
 	@Getter @Setter

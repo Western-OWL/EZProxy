@@ -15,7 +15,6 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
@@ -94,12 +93,12 @@ public class OptionsPage extends BasePage
 		
 		// Add the tool title label and input
 		configForm.add( new Label( "toolTitleLabel", new ResourceModel( "toolTitle" ) ) );
-		configForm.add( new RequiredTextField<String>( "txtToolTitle" ).setRequired( true )
+		configForm.add( new TextField<String>( "txtToolTitle" ).setRequired( true )
 				.add( new SimpleAttributeModifier( "value", toolTitle ) ) );
 		
 		// Add the page title label and input
 		configForm.add( new Label( "pageTitleLabel", new ResourceModel( "pageTitle" ) ) );
-		configForm.add( new RequiredTextField<String>( "txtPageTitle" ).setRequired( true )
+		configForm.add( new TextField<String>( "txtPageTitle" ).setRequired( true )
 				.add( new SimpleAttributeModifier( "value", pageTitle ) ) );
 		
 		// Get all the frame height drop down options
@@ -151,7 +150,7 @@ public class OptionsPage extends BasePage
 		if( frameHeight != null && !frameHeight.isEmpty() 
 				&& new ResourceModel( "frameHeight.option9" ).getObject().equalsIgnoreCase( frameHeight ) ) // frameHeight.option9 = 'Something else'
 		{
-			container.add( new RequiredTextField<Integer>( "txtCustomHeight" )
+			container.add( new TextField<Integer>( "txtCustomHeight" )
 					.setRequired( true ).setType( Integer.class )
 					.add( new RangeValidator<Integer>( MIN_CUSTOM_HEIGHT, MAX_CUSTOM_HEIGHT ) )
 					.add( new SimpleAttributeModifier( "value", customHeight ) ) );
@@ -169,7 +168,7 @@ public class OptionsPage extends BasePage
 		
 		// Add the source url label and input
 		configForm.add( new Label( "sourceURLLabel", new ResourceModel( "url" ) ) );
-		RequiredTextField<String> urlField = new RequiredTextField<String>( "txtSourceURL" );
+		TextField<String> urlField = new TextField<String>( "txtSourceURL" );
 		urlField.setRequired( true );
 		urlField.add( ( url != null && !url.isEmpty() ) 				// If...
 				? new SimpleAttributeModifier( "value", url )			// True...
@@ -201,37 +200,46 @@ public class OptionsPage extends BasePage
 				EZProxyInputModel model = (EZProxyInputModel) configForm.getModelObject();
 				model.setDdFrameHeight( ddModel.getObject() );
 				
-				// Update the tool title and page title
-				sakaiProxy.setToolTitle( siteID, pageID, sakaiProxy.getToolTitle(), model.getTxtToolTitle() );
-				sakaiProxy.setPageTitle( siteID, pageID, model.getTxtPageTitle() );
+				// If the source URL IS a valid URL, save all the info
+				if( urlValidator.isValid( model.getTxtSourceURL() ) )
+				{
+					// Update the tool title and page title
+					sakaiProxy.setToolTitle( siteID, pageID, sakaiProxy.getToolTitle(), model.getTxtToolTitle() );
+					sakaiProxy.setPageTitle( siteID, pageID, model.getTxtPageTitle() );
+					
+					// Set the siteID and pageID
+					EZProxyEntry e = new EZProxyEntry();
+					e.setSiteID( siteID );
+					e.setPageID( pageID );
+					
+					// Frame height
+					e.setName( "ezproxy.frameHeight" );
+					e.setValue( model.getDdFrameHeight() );
+					sakaiProxy.setEZProxyEntry( e );
+					
+					// Custom height
+					e.setName( "ezproxy.customHeight" );
+					e.setValue( model.getTxtCustomHeight() );
+					sakaiProxy.setEZProxyEntry( e );
+					
+					// URL
+					e.setName( "ezproxy.sourceURL" );
+					e.setValue( model.getTxtSourceURL() );
+					sakaiProxy.setEZProxyEntry( e );
+					
+					// New window
+					e.setName( "ezproxy.newWindow" );
+					e.setValue( model.getChkNewWindow().toString() );
+					sakaiProxy.setEZProxyEntry( e );
+					
+					// Return to the content page
+					setResponsePage( ContentPage.class );
+				}
 				
-				// Set the siteID and pageID
-				EZProxyEntry e = new EZProxyEntry();
-				e.setSiteID( siteID );
-				e.setPageID( pageID );
-				
-				// Frame height
-				e.setName( "ezproxy.frameHeight" );
-				e.setValue( model.getDdFrameHeight() );
-				sakaiProxy.setEZProxyEntry( e );
-				
-				// Custom height
-				e.setName( "ezproxy.customHeight" );
-				e.setValue( model.getTxtCustomHeight() );
-				sakaiProxy.setEZProxyEntry( e );
-				
-				// URL
-				e.setName( "ezproxy.sourceURL" );
-				e.setValue( model.getTxtSourceURL() );
-				sakaiProxy.setEZProxyEntry( e );
-				
-				// New window
-				e.setName( "ezproxy.newWindow" );
-				e.setValue( model.getChkNewWindow().toString() );
-				sakaiProxy.setEZProxyEntry( e );
-				
-				// Return to the content page
-				setResponsePage( ContentPage.class );
+				// HACK; if it's not valid, just get a new copy of the page
+				// (this avoids the empty half-shown feedback panel and the update button being enabled when it shouldn't be)
+				else
+					setResponsePage( OptionsPage.class );
 			}
 		};
 		btnUpdate.add( new SimpleAttributeModifier( "value", new ResourceModel( "update" ).getObject() ) );
@@ -257,7 +265,6 @@ public class OptionsPage extends BasePage
 		buttonHolder.add( btnCancel );
 		
 		// Add the onchange AJAX behaviour to the URL text field
-		
 		urlField.add( new OnChangeAjaxBehavior()
 		{
 			private static final long serialVersionUID = -8344894283071902526L;
