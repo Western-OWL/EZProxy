@@ -4,7 +4,7 @@
 	<parent>
     <artifactId>ezproxy</artifactId>
     <groupId>ca.uwo.owl</groupId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
   </parent>
 	
 	<name>ezproxy - API</name>
@@ -20,6 +20,10 @@
   	<dependencies>
 
     	<!-- project dependencies -->
+    	<dependency>
+			<groupId>org.sakaiproject.entitybroker</groupId>
+			<artifactId>entitybroker-api</artifactId>
+		</dependency>
 		
     	<!-- third party dependencies -->
    		<dependency>
