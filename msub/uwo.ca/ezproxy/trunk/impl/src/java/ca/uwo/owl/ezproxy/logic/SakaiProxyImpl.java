@@ -1,6 +1,7 @@
 package ca.uwo.owl.ezproxy.logic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
@@ -415,9 +416,8 @@ public class SakaiProxyImpl implements SakaiProxy
 		
 		// Get the list of allowed system roles to view an ezproxy link
 		allowedRoles = new ArrayList<String>();
-		int count = serverConfigurationService.getInt( "ezproxy.allow.view.count", 0 );
-		for( int i = 1; i <= count; ++i )
-			allowedRoles.add( serverConfigurationService.getString( "ezproxy.allow.view." + i ).toLowerCase() );
+		try { allowedRoles = Arrays.asList( serverConfigurationService.getStrings( "ezproxy.allow.view" ) ); }
+		catch( Exception ex ) { allowedRoles = new ArrayList<String>(); }
 	}
 	
 	@Getter @Setter
