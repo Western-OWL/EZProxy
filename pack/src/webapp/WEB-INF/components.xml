@@ -17,7 +17,13 @@
 		<property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService" />
 		<property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
 		<property name="functionManager" ref="org.sakaiproject.authz.api.FunctionManager" />
-		
 	</bean>
-
+	
+	<!--  EZProxy Entity Provider -->
+	<bean id="ca.uwo.owl.ezproxy.logic.entity.EZProxyEntityProvider" 
+		class="ca.uwo.owl.ezproxy.logic.entity.EZProxyEntityProviderImpl">
+		<property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+		<property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
+		<property name="securityService" ref="org.sakaiproject.authz.api.SecurityService" />
+	</bean>
 </beans>
