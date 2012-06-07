@@ -415,7 +415,6 @@ public class SakaiProxyImpl implements SakaiProxy
 		functionManager.registerFunction( TOOL_PERM_NAME );
 		
 		// Get the list of allowed system roles to view an ezproxy link
-		allowedRoles = new ArrayList<String>();
 		try { allowedRoles = Arrays.asList( serverConfigurationService.getStrings( "ezproxy.allow.view" ) ); }
 		catch( Exception ex ) { allowedRoles = new ArrayList<String>(); }
 	}
