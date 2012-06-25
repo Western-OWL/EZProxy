@@ -465,7 +465,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 		
 		// Otherwise just build some HTML to tell the user they're not allowed to view EZProxy links
 		else
-			sb.append( "<h2>You're not authorized to view EZProxy links</h2>" );
+			sb.append( "<h2>You do not have permission to view this EZProxy Link.</h2>" );
 		
 		// Return the built HTML string
 		sb.append( "</body></html>" );
