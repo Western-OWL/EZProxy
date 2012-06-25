@@ -20,6 +20,8 @@
       		<groupId>ca.uwo.owl</groupId>
       		<artifactId>ezproxy-api</artifactId>
     	</dependency>
+		
+		<!-- EntityBroker -->
 		<dependency>
 			<groupId>org.sakaiproject.entitybroker</groupId>
 			<artifactId>entitybroker-api</artifactId>
@@ -50,6 +52,11 @@
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+		
 		
 		<!-- Sakai dependencies -->
         <dependency>
