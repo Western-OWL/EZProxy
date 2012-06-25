@@ -61,6 +61,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 	private static final String SERVICE_URL 	= ServerConfigurationService.getString( "ezproxy.url" );	// The EZProxy service URL
 	private static final String SHARED_SECRET 	= ServerConfigurationService.getString( "ezproxy.secret" );	// The EZProxy shared secret
 	private static List<String> allowedRoles 	= new ArrayList<String>();
+	private static final String AUTH_FAIL_MSG	= "You do not have permission to view this EZProxy Link.";
 	
 	/**
 	 * {@inheritDoc}
@@ -465,7 +466,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 		
 		// Otherwise just build some HTML to tell the user they're not allowed to view EZProxy links
 		else
-			sb.append( "<h2>You do not have permission to view this EZProxy Link.</h2>" );
+			sb.append( "<h2>" + AUTH_FAIL_MSG + "</h2>" );
 		
 		// Return the built HTML string
 		sb.append( "</body></html>" );
