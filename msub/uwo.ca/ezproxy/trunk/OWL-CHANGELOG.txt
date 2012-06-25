@@ -1,3 +1,5 @@
+2012.05.25:
+	- [EZP-10] - fully implemented ezproxy entity provider
 2012.05.18:
 	- incremented to v.1.0.2
 	- [EZP-19] - updated tool's user facing description
