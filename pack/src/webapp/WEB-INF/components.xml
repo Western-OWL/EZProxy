@@ -21,9 +21,13 @@
 	
 	<!--  EZProxy Entity Provider -->
 	<bean id="ca.uwo.owl.ezproxy.logic.entity.EZProxyEntityProvider" 
-		class="ca.uwo.owl.ezproxy.logic.entity.EZProxyEntityProviderImpl">
+		class="ca.uwo.owl.ezproxy.logic.entity.EZProxyEntityProviderImpl"
+		init-method="init">
+		
+		<!-- API injection -->
 		<property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
 		<property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
 		<property name="securityService" ref="org.sakaiproject.authz.api.SecurityService" />
+		<property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
 	</bean>
 </beans>

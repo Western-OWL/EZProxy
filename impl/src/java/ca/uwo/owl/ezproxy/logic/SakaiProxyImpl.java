@@ -416,7 +416,11 @@ public class SakaiProxyImpl implements SakaiProxy
 		
 		// Get the list of allowed system roles to view an ezproxy link
 		try { allowedRoles = Arrays.asList( serverConfigurationService.getStrings( "ezproxy.allow.view" ) ); }
-		catch( Exception ex ) { allowedRoles = new ArrayList<String>(); }
+		catch( Exception ex ) 
+		{ 
+			log.error( "sakai.property not found: ezproxy.allow.view - " + ex.getMessage() );
+			allowedRoles = new ArrayList<String>(); 
+		}
 	}
 	
 	@Getter @Setter
