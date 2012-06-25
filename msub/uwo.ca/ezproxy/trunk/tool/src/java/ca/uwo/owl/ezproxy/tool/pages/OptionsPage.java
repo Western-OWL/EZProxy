@@ -261,7 +261,10 @@ public class OptionsPage extends BasePage
 			}
 		};
 		btnCancel.setDefaultFormProcessing( false );
-		btnCancel.add( new SimpleAttributeModifier( "value", new ResourceModel( "cancel" ).getObject() ) );
+		if( !firstRun )
+			btnCancel.add( new SimpleAttributeModifier( "value", new ResourceModel( "cancel" ).getObject() ) );
+		else
+			btnCancel.add( new SimpleAttributeModifier( "value", new ResourceModel( "clear" ).getObject() ) );
 		buttonHolder.add( btnCancel );
 		
 		// Add the onchange AJAX behaviour to the URL text field
