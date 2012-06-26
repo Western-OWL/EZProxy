@@ -1,3 +1,6 @@
+2012.05.26:
+	- [EZP-21] - filter ezproxy entities that haven't been initialized
+	- [EZP-20] - add icon images beside warning/notification messages
 2012.05.25:
 	- [EZP-18] - changed 'cancel' button text to 'clear form' on first run
 	- [EZP-10] - fully implemented ezproxy entity provider
