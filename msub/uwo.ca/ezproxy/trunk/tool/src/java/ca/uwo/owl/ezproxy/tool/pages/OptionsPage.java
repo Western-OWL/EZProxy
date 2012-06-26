@@ -50,7 +50,7 @@ public class OptionsPage extends BasePage
 		boolean ableToConfig = sakaiProxy.isCurrentUserConfigAuth();
 		
 		// Create a list of valid protocols for URL validation, create the URL validator object
-		String[] schemes = { "http", "https" };
+		final String[] schemes = { "http", "https" };
 		final UrlValidator urlValidator = new UrlValidator( schemes );
 		
 		// Get the EZProxyEntries
