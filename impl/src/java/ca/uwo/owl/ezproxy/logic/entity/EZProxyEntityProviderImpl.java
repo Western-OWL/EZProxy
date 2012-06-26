@@ -15,6 +15,7 @@ import lombok.Setter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.entity.api.ResourceProperties;
@@ -55,13 +56,15 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 										PropertyProvideable, Resolvable, Outputable, RESTful, Redirectable, ActionsExecutable
 {
 	// Class members
-	private static final Log 	log 			= LogFactory.getLog( EZProxyEntityProviderImpl.class );		// The logger
-	private static final String TOOL_PERM_NAME 	= "ezproxy.configure"; 										// EZProxy configuration permission name
-	private static final String TOOL_REG_NAME 	= "sakai.ezproxy"; 											// The name of the tool registration
-	private static final String SERVICE_URL 	= ServerConfigurationService.getString( "ezproxy.url" );	// The EZProxy service URL
-	private static final String SHARED_SECRET 	= ServerConfigurationService.getString( "ezproxy.secret" );	// The EZProxy shared secret
-	private static List<String> allowedRoles 	= new ArrayList<String>();
-	private static final String AUTH_FAIL_MSG	= "You do not have permission to view this EZProxy Link.";
+	private static final Log 			log 			= LogFactory.getLog( EZProxyEntityProviderImpl.class );		// The logger
+	private static final String 		TOOL_PERM_NAME 	= "ezproxy.configure"; 										// EZProxy configuration permission name
+	private static final String 		TOOL_REG_NAME 	= "sakai.ezproxy"; 											// The name of the tool registration
+	private static final String 		SERVICE_URL 	= ServerConfigurationService.getString( "ezproxy.url" );	// The EZProxy service URL
+	private static final String 		SHARED_SECRET 	= ServerConfigurationService.getString( "ezproxy.secret" );	// The EZProxy shared secret
+	private static List<String> 		allowedRoles 	= new ArrayList<String>();									// The list of allowed roles from sakai.properties
+	private static final String 		AUTH_FAIL_MSG	= "You do not have permission to view this EZProxy Link.";	// The view auth fail message
+	private static final String[] 		schemes = { "http", "https" };												// The list of valid protocols for URL validation
+	private static final UrlValidator 	urlValidator = new UrlValidator( schemes );									// The URL validator object
 	
 	/**
 	 * {@inheritDoc}
@@ -112,7 +115,16 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 								// Get the properties for this EZProxy instance
 								ResourceProperties props = page.getProperties();
 								if( props != null )
-									retVal.add( "/" + ENTITY_PREFIX + "/" + siteID + ":" + page.getId() );
+								{
+									// Create the ref string
+									String refString = "/" + ENTITY_PREFIX + "/" + siteID + ":" + page.getId();
+									
+									// If the sourceURL for this EZProxy instance is NOT null, NOT 'n/a', NOT 'https://' AND NOT 'http://',
+									// this instance has been initialized with a valid URL, so add it to the list of entity refs to return
+									String sourceURL = getPropertyValue( refString, "ezproxyURL" );
+									if( sourceURL != null && urlValidator.isValid( sourceURL ) )
+										retVal.add( refString );
+								}
 							}
 						}
 					}

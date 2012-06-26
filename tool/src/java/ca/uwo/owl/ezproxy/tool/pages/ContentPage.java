@@ -4,12 +4,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.ResourceModel;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 
@@ -42,6 +44,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 		List<EZProxyEntry> entries = sakaiProxy.getEZProxyEntry( siteID, pageID );
 		boolean ableToConfig = sakaiProxy.isCurrentUserConfigAuth();
 		boolean ableToView = sakaiProxy.isCurrentUserViewAuth();
+		Image imageIcon = new Image( "icon", new ResourceReference( ContentPage.class, "error.png" ) );
 		
 		// If the user has the authorization to view an EZProxy link...
 		if( ableToView )
@@ -67,9 +70,12 @@ public class ContentPage extends BasePage implements IHeaderContributor
 						if( "true".equalsIgnoreCase( e.getValue() ) )
 							newWindow = true;
 				
-				// If it's a new window link, show the info label
+				// If it's a new window link, show the info label, change to the info icon
 				if( newWindow )
+				{
 					configuredPopup.setVisibilityAllowed( true );
+					imageIcon = new Image( "icon", new ResourceReference( ContentPage.class, "info.png" ) );
+				}
 			}
 			
 			// Add the labels and Iframe component
@@ -126,6 +132,10 @@ public class ContentPage extends BasePage implements IHeaderContributor
 								( new ResourceModel( "frameHeight.option9" ).getObject().equalsIgnoreCase( frameHeight ) ) 	// If... (frameHeight.option9 = 'Something else')
 								? customHeight 																				// True...
 								: frameHeight ) );																			// False...
+						
+						// Set the image icon to blank (it's been configured, they're allowed to see it, and it opens in the same page)
+						imageIcon = new Image( "icon" );
+						imageIcon.setVisibilityAllowed( false );
 					}
 				}
 				
@@ -140,6 +150,9 @@ public class ContentPage extends BasePage implements IHeaderContributor
 			// If the link has not been configured, AND they have the permission to configure it; force them to the config page
 			else if( !isConfigured && ableToConfig )
 				this.setResponsePage( OptionsPage.class );
+			
+			// Add the image
+			add( imageIcon );
 		}
 		
 		// Otherwise, the user does not have the authority to view (or configure) EZProxy links
@@ -155,6 +168,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 			WebMarkupContainer iframe = new WebMarkupContainer( "iframe" );
 			iframe.setVisibilityAllowed( false );
 			add( iframe );
+			add( imageIcon );
 		}
 	}
 	
