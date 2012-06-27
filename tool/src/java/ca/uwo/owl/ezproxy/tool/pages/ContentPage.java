@@ -44,7 +44,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 		List<EZProxyEntry> entries = sakaiProxy.getEZProxyEntry( siteID, pageID );
 		boolean ableToConfig = sakaiProxy.isCurrentUserConfigAuth();
 		boolean ableToView = sakaiProxy.isCurrentUserViewAuth();
-		Image imageIcon = new Image( "icon", new ResourceReference( ContentPage.class, "error.png" ) );
+		Image imageIcon = new Image( "icon", new ResourceReference( ContentPage.class, "images/error.png" ) );
 		
 		// If the user has the authorization to view an EZProxy link...
 		if( ableToView )
@@ -74,7 +74,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
 				if( newWindow )
 				{
 					configuredPopup.setVisibilityAllowed( true );
-					imageIcon = new Image( "icon", new ResourceReference( ContentPage.class, "info.png" ) );
+					imageIcon = new Image( "icon", new ResourceReference( ContentPage.class, "images/info.png" ) );
 				}
 			}
 			

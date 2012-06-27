@@ -43,6 +43,7 @@ import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.user.api.UserDirectoryService;
+import org.sakaiproject.util.ResourceLoader;
 
 import ca.uwo.owl.ezproxy.logic.SharedSecretAuth;
 import ca.uwo.owl.ezproxy.logic.entity.EZProxyEntityProvider;
@@ -61,10 +62,12 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 	private static final String 		TOOL_REG_NAME 	= "sakai.ezproxy"; 											// The name of the tool registration
 	private static final String 		SERVICE_URL 	= ServerConfigurationService.getString( "ezproxy.url" );	// The EZProxy service URL
 	private static final String 		SHARED_SECRET 	= ServerConfigurationService.getString( "ezproxy.secret" );	// The EZProxy shared secret
+	private static final String[] 		schemes 		= { "http", "https" };										// The list of valid protocols for URL validation
+	private static final UrlValidator 	urlValidator 	= new UrlValidator( schemes );								// The URL validator object
 	private static List<String> 		allowedRoles 	= new ArrayList<String>();									// The list of allowed roles from sakai.properties
-	private static final String 		AUTH_FAIL_MSG	= "You do not have permission to view this EZProxy Link.";	// The view auth fail message
-	private static final String[] 		schemes = { "http", "https" };												// The list of valid protocols for URL validation
-	private static final UrlValidator 	urlValidator = new UrlValidator( schemes );									// The URL validator object
+	
+	// Instance members
+	private ResourceLoader resourceLoader = new ResourceLoader( "messages" );
 	
 	/**
 	 * {@inheritDoc}
@@ -209,10 +212,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 			else if( isCurrentUserViewAuth() )
 				requestGetter.getResponse().sendRedirect( "/direct/" + ENTITY_PREFIX + "/" + ref.getId() + "/redirect" );
 			else
-			{
 				requestGetter.getResponse().sendRedirect( "/direct/" + ENTITY_PREFIX + "/" + ref.getId() + "/viewHTML" );
-				ref = null;
-			}
 		}
 		catch( IOException ex ) { log.error( ex ); }
 		
@@ -469,19 +469,19 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 			log.debug( "createEZProxyEntityHTML()" );
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append( "<html><head></head><body>" );
+		sb.append( resourceLoader.getFormattedMessage( "htmlHeader", new Object[] { ServerConfigurationService.getString( "skin.repo" ) + "/tool_base.css" } ) );
 		
 		// If the user is allowed to view EZProxy links, generate the HTML to view the link
 		if( isCurrentUserViewAuth() )
-			sb.append( "<iframe height=\"100%\" width=\"100%\" frameborder=\"0\" src=\"" ).append( 
-					generateFinalEZProxyURL( entity, sessionManager.getCurrentSession().getUserEid() ) ).append( "\"></iframe>" );
+			sb.append( resourceLoader.getFormattedMessage( "htmlIframe", new Object[]
+					{ generateFinalEZProxyURL( entity, sessionManager.getCurrentSession().getUserEid() ) } ) );
 		
 		// Otherwise just build some HTML to tell the user they're not allowed to view EZProxy links
 		else
-			sb.append( "<h2>" + AUTH_FAIL_MSG + "</h2>" );
+			sb.append( resourceLoader.getFormattedMessage( "htmlH2", new Object[] { resourceLoader.getString( "authFailMsg" ) } ) );
 		
 		// Return the built HTML string
-		sb.append( "</body></html>" );
+		sb.append( resourceLoader.getString( "htmlFooter" ) );
 		return sb.toString();
 	}
 
@@ -495,20 +495,12 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 	public String[] 	getHandledInputFormats() 														{ return null; }
 	public void 		setPropertyValue( String reference, String name, String value ) 				{}
 	
-	@Getter @Setter
-	private SessionManager sessionManager;
-	
-	@Getter @Setter
-	private SiteService siteService;
-	
-	@Getter @Setter
-	private SecurityService securityService;
-	
-	@Getter @Setter
-	private UserDirectoryService userDirectoryService;
-	
-	@Setter
-	private RequestGetter requestGetter;
+	// Sakai API's
+	@Getter @Setter private SessionManager 			sessionManager;
+	@Getter @Setter private SiteService 			siteService;
+	@Getter @Setter private SecurityService 		securityService;
+	@Getter @Setter private UserDirectoryService 	userDirectoryService;
+	@Setter 		private RequestGetter 			requestGetter;
 	
 	/**
 	 * init - perform any actions required here for when this bean starts up

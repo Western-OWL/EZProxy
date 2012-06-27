@@ -81,9 +81,10 @@
 	<build>
 		<resources>
             <resource>
-                <directory>${basedir}/src/resources</directory>
+                <directory>${basedir}/src/bundle</directory>
                 <includes>
                     <include>**/*.properties</include>
+                    <include>**/*.png</include>
                 </includes>
             </resource>
         </resources>
