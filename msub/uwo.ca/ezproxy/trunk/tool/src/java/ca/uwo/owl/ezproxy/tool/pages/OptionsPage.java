@@ -33,7 +33,6 @@ import ca.uwo.owl.ezproxy.tool.model.EZProxyInputModel;
 public class OptionsPage extends BasePage
 {	
 	// Class members
-	@SuppressWarnings("unused")
 	private static final Logger log 				= Logger.getLogger( OptionsPage.class );	// The logger
 	private static final int 	MIN_CUSTOM_HEIGHT 	= 20;										// The minimum value allowed for custom frame height
 	private static final int 	MAX_CUSTOM_HEIGHT 	= 9999;										// The maximum value allowed for custom frame height
@@ -41,6 +40,9 @@ public class OptionsPage extends BasePage
 	// Constructor
 	public OptionsPage() 
 	{		
+		if( log.isDebugEnabled() )
+			log.debug( "OptionsPage()" );
+		
 		// Disable the options link, get the siteID, pageID, tool title
 		disableLink( optionsLink );
 		final String siteID = sakaiProxy.getCurrentSiteId();
