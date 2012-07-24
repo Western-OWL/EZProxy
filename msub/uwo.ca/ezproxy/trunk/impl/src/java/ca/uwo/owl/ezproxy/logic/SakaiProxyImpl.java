@@ -34,9 +34,10 @@ import ca.uwo.owl.ezproxy.model.EZProxyEntry;
 public class SakaiProxyImpl implements SakaiProxy
 {
 	// Class members
-	private static final Logger 	log 			= Logger.getLogger( SakaiProxyImpl.class );	// The logger
-	private static final String 	TOOL_PERM_NAME 	= "ezproxy.configure";	// The name of the permission used to determine access to EZProxy link configuration page
-	private static List<String> 	allowedRoles 	= new ArrayList<String>();
+	private static final Logger 	log 								= Logger.getLogger( SakaiProxyImpl.class );	// The logger
+	private static final String 	TOOL_PERM_NAME 						= "ezproxy.configure";	// The name of the permission used to determine access to EZProxy link configuration page
+	private static final String		SAKAI_PROP_ALLOWED_VIEW_ROLES		= "ezproxy.allow.view";	// The name of the sakai property holding the allowed view roles
+	private static List<String> 	allowedRoles 						= new ArrayList<String>();
 	
 	/**
  	* {@inheritDoc}
@@ -415,7 +416,7 @@ public class SakaiProxyImpl implements SakaiProxy
 		functionManager.registerFunction( TOOL_PERM_NAME );
 		
 		// Get the list of allowed system roles to view an ezproxy link
-		try { allowedRoles = Arrays.asList( serverConfigurationService.getStrings( "ezproxy.allow.view" ) ); }
+		try { allowedRoles = Arrays.asList( serverConfigurationService.getStrings( SAKAI_PROP_ALLOWED_VIEW_ROLES ) ); }
 		catch( Exception ex ) 
 		{ 
 			log.error( "sakai.property not found: ezproxy.allow.view - " + ex.getMessage() );
