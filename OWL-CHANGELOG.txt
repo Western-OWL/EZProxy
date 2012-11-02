@@ -1,3 +1,5 @@
+2012.11.02:
+	- improved the register function call (check if already registered first)
 2012.05.26:
 	- [EZP-21] - filter ezproxy entities that haven't been initialized
 	- [EZP-20] - add icon images beside warning/notification messages

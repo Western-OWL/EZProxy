@@ -412,8 +412,10 @@ public class SakaiProxyImpl implements SakaiProxy
 	{
 		log.info( "init" );
 		
-		// Register the EZProxy configuration permission
-		functionManager.registerFunction( TOOL_PERM_NAME );
+		// Register the EZProxy configuration permission (if it hasn't been already)
+		List<String> registeredPermissions = functionManager.getRegisteredFunctions( "ezproxy" );
+		if( !registeredPermissions.contains( TOOL_PERM_NAME ) )
+			functionManager.registerFunction( TOOL_PERM_NAME );
 		
 		// Get the list of allowed system roles to view an ezproxy link
 		try { allowedRoles = Arrays.asList( serverConfigurationService.getStrings( SAKAI_PROP_ALLOWED_VIEW_ROLES ) ); }
