@@ -1,14 +1,16 @@
+2013.01.17:
+	- [EZP-22] port to 2.9; increment to v1.1.0; update lombok to v0.11.6
 2012.11.02:
 	- improved the register function call (check if already registered first)
 2012.05.26:
-	- [EZP-21] - filter ezproxy entities that haven't been initialized
-	- [EZP-20] - add icon images beside warning/notification messages
+	- [EZP-21] filter ezproxy entities that haven't been initialized
+	- [EZP-20] add icon images beside warning/notification messages
 2012.05.25:
-	- [EZP-18] - changed 'cancel' button text to 'clear form' on first run
-	- [EZP-10] - fully implemented ezproxy entity provider
+	- [EZP-18] changed 'cancel' button text to 'clear form' on first run
+	- [EZP-10] fully implemented ezproxy entity provider
 2012.05.18:
 	- incremented to v.1.0.2
-	- [EZP-19] - updated tool's user facing description
+	- [EZP-19] updated tool's user facing description
 2012.05.09:
 	- [EZP-17] invalid URLs no longer accepted
 	- [EZP-16] allowed roles to view EZProxy links moved to sakai.properties
