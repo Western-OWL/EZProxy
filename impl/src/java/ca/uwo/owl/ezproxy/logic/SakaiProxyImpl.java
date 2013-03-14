@@ -386,6 +386,12 @@ public class SakaiProxyImpl implements SakaiProxy
 		if( skin == null )
 			skin = serverConfigurationService.getString( "skin.default" );
 		
+		// bjones86 - SAK-21890 - prepend 'neo'
+		String templates = serverConfigurationService.getString( "portal.templates", "neoskin" );
+		String prefix = serverConfigurationService.getString( "portal.neoprefix", "neo-" );
+		if( "neoskin".equals( templates ) && !skin.startsWith( prefix ) )
+			skin = prefix + skin;
+		
 		return skinRepo + "/" + skin + "/tool.css";
 	}
 	
