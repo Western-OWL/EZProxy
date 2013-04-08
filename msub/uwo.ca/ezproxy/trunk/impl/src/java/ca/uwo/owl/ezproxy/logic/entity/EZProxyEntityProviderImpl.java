@@ -98,13 +98,21 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
 			{
 				try
 				{
+					// If the siteID and userID are the same, it's really trying to access the user's My Workspace, so we need to prepend '~' to the siteID
+					if( siteID.equals( userID ) )
+						siteID = "~" + siteID;
+					
 					// Get the site, verify it exists
 					Site site = siteService.getSite( siteID );
 					if( site != null )
 					{
 						// Check to make sure the current user has 'ezproxy.configure" permission for the site
 						if( !securityService.unlock( userID, TOOL_PERM_NAME, siteService.siteReference( siteID ) ) )
-							throw new SecurityException( "You do not have access to site: " + siteID );
+						{
+							// Log the message that this user doesn't have the permision for the site, return an empty list
+							log.error( "User (" + userID + ") does not have permission (" + TOOL_PERM_NAME + ") for site: " + siteID );
+							return retVal;
+						}
 						
 						// Loop through a list of EZProxy instances in this site
 						Collection<ToolConfiguration> ezproxyLinks = site.getTools( TOOL_REG_NAME );
