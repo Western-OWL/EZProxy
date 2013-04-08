@@ -1,3 +1,5 @@
+2013.04.08:
+	- [EZP-24] fix bug when entity browse to my workspace
 2013.03.14:
 	- [EZP-23] prepend 'neo' to stylesheet
 2013.01.17:
