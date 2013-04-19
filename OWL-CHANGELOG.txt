@@ -1,3 +1,5 @@
+2013.04.19:
+	- [EZP-26] remove small unclickable button in menu bar
 2013.04.08:
 	- [EZP-24] fix bug when entity browse to my workspace
 2013.03.14:
