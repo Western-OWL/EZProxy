@@ -1,5 +1,3 @@
-2013.05.07:
-	- changing parent in master pom from 2.9-SNAPSHOT to 2.9.1
 2013.04.22:
 	- [EZP-27] change name to 'EZProxy Library Link'
 2013.04.19:
