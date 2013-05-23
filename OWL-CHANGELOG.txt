@@ -1,3 +1,5 @@
+2013.05.23:
+	- [EZP-29] change pom parent to base, update tool version numbers (v1.1.0), remove log4j dependency
 2013.04.22:
 	- [EZP-27] change name to 'EZProxy Library Link'
 2013.04.19:
