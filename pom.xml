@@ -38,7 +38,7 @@
 			<dependency>
 				<groupId>org.sakaiproject.entitybroker</groupId>
 				<artifactId>entitybroker-api</artifactId>
-				<version>1.6-SNAPSHOT</version>
+				<version>1.5.1</version>
 				<scope>provided</scope>
 			</dependency>
 			
