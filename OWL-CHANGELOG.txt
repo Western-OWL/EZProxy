@@ -1,3 +1,5 @@
+2014.12.03:
+	- [EZP-33] http/https link detection/warning
 2014.04.21:
 	- [EZP-30] fixed dependency version in pom, upgraded to version 1.1.2
 2013.05.23:
