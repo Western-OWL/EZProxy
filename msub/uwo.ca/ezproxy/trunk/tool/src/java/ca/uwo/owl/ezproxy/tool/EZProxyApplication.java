@@ -20,60 +20,63 @@ import ca.uwo.owl.ezproxy.tool.pages.ContentPage;
  */
 public class EZProxyApplication extends WebApplication
 {
-	@Override
-	protected void init()
-	{	
-		//Configure for Spring injection
-		addComponentInstantiationListener( new SpringComponentInjector( this ) );
-		
-		//Don't throw an exception if we are missing a property, just fallback
-		getResourceSettings().setThrowExceptionOnMissingResource( false );
-		
-		//Remove the wicket specific tags from the generated markup
-		getMarkupSettings().setStripWicketTags( true );
-		
-		//Don't add any extra tags around a disabled link (default is <em></em>)
-		getMarkupSettings().setDefaultBeforeDisabledLink( null );
-		getMarkupSettings().setDefaultAfterDisabledLink( null );
-				
-		// On Wicket session timeout, redirect to main page
-		getApplicationSettings().setPageExpiredErrorPage( ContentPage.class );
-		getApplicationSettings().setAccessDeniedPage( ContentPage.class );
-		
-		//to put this app into deployment mode, see web.xml
-	}
-	
-	/**
-	 *  Throw RuntimeExceptions so they are caught by the Sakai ErrorReportHandler(non-Javadoc)
-	 *  
-	 * @see org.apache.wicket.protocol.http.WebApplication#newRequestCycle(org.apache.wicket.Request, org.apache.wicket.Response)
-	 */
-	@Override
-	public RequestCycle newRequestCycle( Request request, Response response )
-	{
-		return new WebRequestCycle( this, (WebRequest)request, (WebResponse)response )
-		{
-			@Override
-			public Page onRuntimeException( Page page, RuntimeException e )
-			{
-				throw e;
-			}
-		};
-	}
-	
-	/**
-	 * The main page for our app
-	 * 
-	 * @see org.apache.wicket.Application#getHomePage()
-	 */
-	public Class<ContentPage> getHomePage()
-	{
-		return ContentPage.class;
-	}
-	
-	
-	/**
+    @Override
+    protected void init()
+    {	
+        //Configure for Spring injection
+        addComponentInstantiationListener( new SpringComponentInjector( this ) );
+
+        //Don't throw an exception if we are missing a property, just fallback
+        getResourceSettings().setThrowExceptionOnMissingResource( false );
+
+        //Remove the wicket specific tags from the generated markup
+        getMarkupSettings().setStripWicketTags( true );
+
+        //Don't add any extra tags around a disabled link (default is <em></em>)
+        getMarkupSettings().setDefaultBeforeDisabledLink( null );
+        getMarkupSettings().setDefaultAfterDisabledLink( null );
+
+        // On Wicket session timeout, redirect to main page
+        getApplicationSettings().setPageExpiredErrorPage( ContentPage.class );
+        getApplicationSettings().setAccessDeniedPage( ContentPage.class );
+
+        //to put this app into deployment mode, see web.xml
+    }
+
+    /**
+     *  Throw RuntimeExceptions so they are caught by the Sakai ErrorReportHandler(non-Javadoc)
+     *  
+     * @return 
+     * @see org.apache.wicket.protocol.http.WebApplication#newRequestCycle(org.apache.wicket.Request, org.apache.wicket.Response)
+     */
+    @Override
+    public RequestCycle newRequestCycle( Request request, Response response )
+    {
+        return new WebRequestCycle( this, (WebRequest)request, (WebResponse)response )
+        {
+            @Override
+            public Page onRuntimeException( Page page, RuntimeException e )
+            {
+                throw e;
+            }
+        };
+    }
+
+    /**
+     * The main page for our app
+     * 
+     * @return 
+     * @see org.apache.wicket.Application#getHomePage()
+     */
+    @Override
+    public Class<ContentPage> getHomePage()
+    {
+        return ContentPage.class;
+    }
+
+
+    /**
      * Constructor
      */
-	public EZProxyApplication()	{}
+    public EZProxyApplication()	{}
 }
