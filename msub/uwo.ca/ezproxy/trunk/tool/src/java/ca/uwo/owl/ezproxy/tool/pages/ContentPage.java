@@ -62,10 +62,20 @@ public class ContentPage extends BasePage implements IHeaderContributor
             configuredPopup.setVisibilityAllowed( false );
 
             // If there were the right amount of entries returned...
+            String destinationURL = "";
             if( entries != null && entries.size() == NUM_ENTRIES_PER_LINK )
             {
                 // It has been configured
                 isConfigured = true;
+                
+                // Get the destination URL
+                for( EZProxyEntry e : entries )
+                {
+                    if( EZProxyConstants.EZPROXY_PROP_SOURCE_URL.equalsIgnoreCase( e.getName() ) )
+                    {
+                        destinationURL = e.getValue();
+                    }
+                }
 
                 // Determine if it was configured for a new window/tab
                 notConfiguredHeading.setVisibilityAllowed( false );
@@ -73,7 +83,8 @@ public class ContentPage extends BasePage implements IHeaderContributor
                 {
                     if( EZProxyConstants.EZPROXY_PROP_NEW_WINDOW.equalsIgnoreCase( e.getName() ) )
                     {
-                        if( "true".equalsIgnoreCase( e.getValue() ) )
+                        // If the config options were set to open in a new window OR the destination URL is NOT https...
+                        if( "true".equalsIgnoreCase( e.getValue() ) || !destinationURL.toLowerCase().startsWith( "https" ) )
                         {
                             newWindow = true;
                         }
@@ -102,15 +113,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
                 String serviceURL = ServerConfigurationService.getString( SAK_PROP_EZPROXY_SERVICE_URL );
                 String sharedSecret = ServerConfigurationService.getString( SAK_PROP_EZPROXY_SHARED_SECTRET );
                 String userEid = sakaiProxy.getCurrentUserEid();
-                String destinationURL = "";
                 String mac = "";
-                for( EZProxyEntry e : entries )
-                {
-                    if( EZProxyConstants.EZPROXY_PROP_SOURCE_URL.equalsIgnoreCase( e.getName() ) )
-                    {
-                        destinationURL = e.getValue();
-                    }
-                }
 
                 // Make sure the service URL and shared secret were in sakai.properties
                 if( serviceURL != null && !serviceURL.isEmpty() && sharedSecret != null && !sharedSecret.isEmpty() )
