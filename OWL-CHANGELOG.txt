@@ -1,5 +1,6 @@
 2015.03.25:
 	- [EZP-28] Fixed icon position for x on instruction screen
+	- [EZP-34] Fixed navIntraTool markup
 2014.12.03:
 	- [EZP-33] http/https link detection/warning
 2014.04.21:
