@@ -1,3 +1,5 @@
+2015.06.04:
+        - [EZP-35] Upgrade Wicket to version 6.19.0
 2015.03.25:
 	- [EZP-28] Fixed icon position for x on instruction screen
 	- [EZP-34] Fixed navIntraTool markup

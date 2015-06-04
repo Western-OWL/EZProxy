@@ -1,6 +1,6 @@
 package ca.uwo.owl.ezproxy.tool.model;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * This provides a model for the EZProxy configuration form.
