@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -20,6 +19,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.RangeValidator;
+import org.apache.wicket.AttributeModifier;
 
 import ca.uwo.owl.ezproxy.model.EZProxyEntry;
 import ca.uwo.owl.ezproxy.tool.model.EZProxyInputModel;
@@ -29,6 +29,7 @@ import ca.uwo.owl.ezproxy.utilities.EZProxyConstants;
  * The 'options' page, so the user can edit the configuration of the EZProxy link.
  * 
  * @author Brian Jones (bjones86@uwo.ca)
+ * @author plukasew
  *
  */
 public class OptionsPage extends BasePage
@@ -115,12 +116,12 @@ public class OptionsPage extends BasePage
         // Add the tool title label and input
         configForm.add( new Label( "toolTitleLabel", new ResourceModel( "toolTitle" ) ) );
         configForm.add( new TextField<String>( "txtToolTitle" ).setRequired( true )
-                .add( new SimpleAttributeModifier( "value", toolTitle ) ) );
+                .add( AttributeModifier.replace( "value", toolTitle ) ) );
 
         // Add the page title label and input
         configForm.add( new Label( "pageTitleLabel", new ResourceModel( "pageTitle" ) ) );
         configForm.add( new TextField<String>( "txtPageTitle" ).setRequired( true )
-                .add( new SimpleAttributeModifier( "value", pageTitle ) ) );
+                .add( AttributeModifier.replace( "value", pageTitle ) ) );
 
         // Get all the frame height drop down options
         List<String> frameHeightOptions = new ArrayList<String>();
@@ -169,7 +170,7 @@ public class OptionsPage extends BasePage
                 }
 
                 // Re-render the component
-                target.addComponent( holder );
+                target.add( holder );
             }
         } );
         configForm.add( ddFrameHeightOptions );
@@ -182,7 +183,7 @@ public class OptionsPage extends BasePage
             container.add( new TextField<Integer>( "txtCustomHeight" )
                     .setRequired( true ).setType( Integer.class )
                     .add( new RangeValidator<Integer>( MIN_CUSTOM_HEIGHT, MAX_CUSTOM_HEIGHT ) )
-                    .add( new SimpleAttributeModifier( "value", customHeight ) ) );
+                    .add( AttributeModifier.replace( "value", customHeight ) ) );
             container.setVisibilityAllowed( true );
 
         }
@@ -199,7 +200,7 @@ public class OptionsPage extends BasePage
         configForm.add( new Label( "sourceURLLabel", new ResourceModel( "url" ) ) );
         TextField<String> urlField = new TextField<String>( "txtSourceURL" );
         urlField.setRequired( true );
-        urlField.add( new SimpleAttributeModifier( "value", url ) );
+        urlField.add( AttributeModifier.replace( "value", url ) );
         configForm.add( urlField );
         
         // Determine if previously saved URL (or default text) is HTTPS
@@ -237,7 +238,7 @@ public class OptionsPage extends BasePage
             
             if( checked )
             {
-                chk.add( new SimpleAttributeModifier( "checked", "checked" ) );
+                chk.add( AttributeModifier.replace( "checked", "checked" ) );
             }
             if( disabled )
             {
@@ -246,7 +247,7 @@ public class OptionsPage extends BasePage
         }
         if( firstRun )
         {
-            chk.add( new SimpleAttributeModifier( "checked", "checked" ) );
+            chk.add( AttributeModifier.replace( "checked", "checked" ) );
         }
         checkboxHolder.add( chk );
         checkboxHolder.add( chkLabel );
@@ -322,7 +323,7 @@ public class OptionsPage extends BasePage
             }
         };
         
-        btnUpdate.add( new SimpleAttributeModifier( "value", new ResourceModel( "update" ).getObject() ) );
+        btnUpdate.add( AttributeModifier.replace( "value", new ResourceModel( "update" ).getObject() ) );
         if( urlValidator.isValid( url ) )
         {
             btnUpdate.setEnabled( true );
@@ -348,11 +349,11 @@ public class OptionsPage extends BasePage
         btnCancel.setDefaultFormProcessing( false );
         if( !firstRun )
         {
-            btnCancel.add( new SimpleAttributeModifier( "value", new ResourceModel( "cancel" ).getObject() ) );
+            btnCancel.add( AttributeModifier.replace( "value", new ResourceModel( "cancel" ).getObject() ) );
         }
         else
         {
-            btnCancel.add( new SimpleAttributeModifier( "value", new ResourceModel( "clear" ).getObject() ) );
+            btnCancel.add( AttributeModifier.replace( "value", new ResourceModel( "clear" ).getObject() ) );
         }
         buttonHolder.add( btnCancel );
 
@@ -376,9 +377,9 @@ public class OptionsPage extends BasePage
                             && !URL.toLowerCase().startsWith( EZProxyConstants.URL_PROTOCOL_HTTPS ) )
                     {
                         plaintextWarning.setVisibilityAllowed( true );
-                        chk.add( new SimpleAttributeModifier( "checked", "checked" ) );
+                        chk.add( AttributeModifier.replace( "checked", "checked" ) );
                         chk.setEnabled( false );
-                        chkLabel.add( new SimpleAttributeModifier( "class", "disabled" ) );
+                        chkLabel.add( AttributeModifier.replace( "class", "disabled" ) );
                     }
                     
                     // Otherwise (for HTTPS, or any invalid protocol/URL), hide the warning and enable the checkbox
@@ -387,7 +388,7 @@ public class OptionsPage extends BasePage
                     {
                         plaintextWarning.setVisibilityAllowed( false );
                         chk.setEnabled( true );
-                        chkLabel.add( new SimpleAttributeModifier( "class", "" ) );
+                        chkLabel.add( AttributeModifier.replace( "class", "" ) );
                     }
                 }
 
@@ -404,9 +405,9 @@ public class OptionsPage extends BasePage
                 }
 
                 // Re-render the components
-                target.addComponent( checkboxHolder );
-                target.addComponent( warningHolder );
-                target.addComponent( buttonHolder );
+                target.add( checkboxHolder );
+                target.add( warningHolder );
+                target.add( buttonHolder );
             }
         } );
 

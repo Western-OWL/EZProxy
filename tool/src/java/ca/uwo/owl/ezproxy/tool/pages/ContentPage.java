@@ -4,20 +4,22 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.AttributeModifier;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 
 import ca.uwo.owl.ezproxy.logic.SharedSecretAuth;
 import ca.uwo.owl.ezproxy.model.EZProxyEntry;
 import ca.uwo.owl.ezproxy.utilities.EZProxyConstants;
-import org.apache.wicket.resource.ContextRelativeResource;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
+import org.apache.wicket.request.resource.ContextRelativeResource;
 
 /**
  * The 'content' page, displaying the content of the EZProxy link.
@@ -150,14 +152,14 @@ public class ContentPage extends BasePage implements IHeaderContributor
 
                         // Setup the iframe; 'frameHeight.option9' = 'Something else', which means the user provided a custom height
                         iframe.setVisibilityAllowed( true );
-                        iframe.add( new SimpleAttributeModifier( "src", finalURL ) );
-                        iframe.add( new SimpleAttributeModifier( "height", 
+                        iframe.add( AttributeModifier.replace( "src", finalURL ) );
+                        iframe.add( AttributeModifier.replace( "height", 
                                 ( new ResourceModel( "frameHeight.option9" ).getObject().equalsIgnoreCase( frameHeight ) ) 	// If... (frameHeight.option9 = 'Something else')
                                 ? customHeight 																				// True...
                                 : frameHeight ) );																			// False...
 
                         // Set the image icon to blank (it's been configured, they're allowed to see it, and it opens in the same page)
-                        imageIcon = new Image( "icon" );
+                        imageIcon = new NonCachingImage( "icon" );
                         imageIcon.setVisibilityAllowed( false );
                     }
                 }
@@ -211,7 +213,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
         String javascript = "window.open(\"" + finalURL + "\");";
         if( isConfigured && newWindow && !propsNotFound )
         {
-            response.renderOnLoadJavascript( javascript );
+            response.render(OnLoadHeaderItem.forScript(javascript));
         }
     }
 }

@@ -1,13 +1,9 @@
 package ca.uwo.owl.ezproxy.tool;
 
-import org.apache.wicket.Page;
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
+import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebRequestCycle;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 
 import ca.uwo.owl.ezproxy.tool.pages.ContentPage;
@@ -16,6 +12,7 @@ import ca.uwo.owl.ezproxy.tool.pages.ContentPage;
  * Main application class for EZProxy
  * 
  * @author Brian Jones (bjones86@uwo.ca)
+ * @author plukasew
  *
  */
 public class EZProxyApplication extends WebApplication
@@ -24,7 +21,7 @@ public class EZProxyApplication extends WebApplication
     protected void init()
     {	
         //Configure for Spring injection
-        addComponentInstantiationListener( new SpringComponentInjector( this ) );
+        getComponentInstantiationListeners().add( new SpringComponentInjector( this ) );
 
         //Don't throw an exception if we are missing a property, just fallback
         getResourceSettings().setThrowExceptionOnMissingResource( false );
@@ -39,6 +36,22 @@ public class EZProxyApplication extends WebApplication
         // On Wicket session timeout, redirect to main page
         getApplicationSettings().setPageExpiredErrorPage( ContentPage.class );
         getApplicationSettings().setAccessDeniedPage( ContentPage.class );
+		
+		// Throw RuntimeExceptions so they are caught by the Sakai ErrorReportHandler
+		getRequestCycleListeners().add(new AbstractRequestCycleListener()
+		{
+			@Override
+			public IRequestHandler onException(RequestCycle cycle, Exception ex)
+			{
+				// the wicket 1.4 equivalent of this method would just throw (see commented out newRequestCycle() below)
+				
+				if (ex instanceof RuntimeException)
+				{
+					throw (RuntimeException) ex;
+				}
+				return null;
+			}
+		});
 
         //to put this app into deployment mode, see web.xml
     }
@@ -49,7 +62,7 @@ public class EZProxyApplication extends WebApplication
      * @return 
      * @see org.apache.wicket.protocol.http.WebApplication#newRequestCycle(org.apache.wicket.Request, org.apache.wicket.Response)
      */
-    @Override
+    /*@Override
     public RequestCycle newRequestCycle( Request request, Response response )
     {
         return new WebRequestCycle( this, (WebRequest)request, (WebResponse)response )
@@ -60,7 +73,7 @@ public class EZProxyApplication extends WebApplication
                 throw e;
             }
         };
-    }
+    }*/
 
     /**
      * The main page for our app
