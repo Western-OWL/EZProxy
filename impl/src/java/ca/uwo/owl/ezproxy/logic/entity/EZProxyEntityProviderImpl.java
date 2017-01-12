@@ -64,7 +64,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     private static final String[]       schemes         = { EZProxyConstants.URL_PROTOCOL_HTTP, EZProxyConstants.URL_PROTOCOL_HTTPS }; // The list of valid protocols for URL validation
     private static final UrlValidator   urlValidator    = new UrlValidator( schemes );                              // The URL validator object
     private static List<String>         allowedRoles    = new ArrayList<String>();                                  // The list of allowed roles from sakai.properties
-    
+
     private static final String SAK_PROP_ALLOWED_ROLES = "ezproxy.allow.view";
 
     // Instance members
@@ -278,16 +278,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
         else
         {
             // If the entity is null, it doesn't exist
-            if( getEZProxyEntity( id ) == null )
-            {
-                return false;
-            }
-
-            // Otherwise, it exists
-            else
-            {
-                return true;
-            }
+            return getEZProxyEntity( id ) != null; // Otherwise, it exists
         }
     }
 
@@ -589,7 +580,13 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Getter @Setter private SiteService             siteService;
     @Getter @Setter private SecurityService         securityService;
     @Getter @Setter private UserDirectoryService    userDirectoryService;
-    @Setter         private RequestGetter           requestGetter;
+                    private RequestGetter           requestGetter;
+
+    @Override
+    public void setRequestGetter( RequestGetter requestGetter )
+    {
+        this.requestGetter = requestGetter;
+    }
 
     /**
      * init - perform any actions required here for when this bean starts up
