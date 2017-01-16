@@ -14,7 +14,7 @@ public interface SakaiProxy
 {
     /**
      * Determine if the current user should be able to view the EZProxy link.
-     * Only student, staff, and faculty members are able to view EZProxy links.
+     * Only student, staff, faculty and admin members are able to view EZProxy links.
      * @return
      */
     public boolean isCurrentUserViewAuth();

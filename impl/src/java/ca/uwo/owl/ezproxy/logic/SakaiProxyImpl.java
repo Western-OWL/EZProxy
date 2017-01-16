@@ -24,6 +24,8 @@ import org.sakaiproject.user.api.UserDirectoryService;
 
 import ca.uwo.owl.ezproxy.model.EZProxyEntry;
 import ca.uwo.owl.ezproxy.utilities.EZProxyConstants;
+import org.sakaiproject.exception.IdUnusedException;
+import org.sakaiproject.exception.PermissionException;
 
 /**
  * Implementation of our SakaiProxy API
@@ -34,10 +36,10 @@ import ca.uwo.owl.ezproxy.utilities.EZProxyConstants;
 public class SakaiProxyImpl implements SakaiProxy
 {
     // Class members
-    private static final Logger     log                             = Logger.getLogger( SakaiProxyImpl.class );	// The logger
+    private static final Logger     LOG                             = Logger.getLogger( SakaiProxyImpl.class );	// The logger
     private static final String     TOOL_PERM_NAME                  = "ezproxy.configure";	// The name of the permission used to determine access to EZProxy link configuration page
     private static final String     SAKAI_PROP_ALLOWED_VIEW_ROLES   = "ezproxy.allow.view";	// The name of the sakai property holding the allowed view roles
-    private static List<String>     allowedRoles                    = new ArrayList<String>();
+    private static List<String>     allowedRoles                    = new ArrayList<>();
 
     /**
     * {@inheritDoc}
@@ -81,11 +83,11 @@ public class SakaiProxyImpl implements SakaiProxy
                 }
             }
         }
-        catch( Exception ex )
+        catch( IdUnusedException | PermissionException ex )
         {
             // Error log
-            log.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            log.error( "SakaiProxyImpl.setToolTitle( siteID=" + siteID + ", pageID=" + pageID + ", newToolTitle=" + newToolTitle + " )" );
+            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
+            LOG.error( "SakaiProxyImpl.setToolTitle( siteID=" + siteID + ", pageID=" + pageID + ", newToolTitle=" + newToolTitle + " )" );
         }
     }
 
@@ -128,11 +130,11 @@ public class SakaiProxyImpl implements SakaiProxy
                 siteService.save( site );
             }
         }
-        catch( Exception ex )
+        catch( IdUnusedException | PermissionException ex )
         {
             // Error log
-            log.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            log.error( "SakaiProxyImpl.setPageTitle( siteID=" + siteID + ", pageID=" + pageID + ", newPageTitle=" + newPageTitle + " )" );
+            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
+            LOG.error( "SakaiProxyImpl.setPageTitle( siteID=" + siteID + ", pageID=" + pageID + ", newPageTitle=" + newPageTitle + " )" );
         }
     }
 
@@ -171,8 +173,8 @@ public class SakaiProxyImpl implements SakaiProxy
         catch( Exception ex )
         {
             // Error log
-            log.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            log.error( "SakaiProxyImpl.getPageTitle( siteID=" + siteID + ", pageID=" + pageID + " )" );
+            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
+            LOG.error( "SakaiProxyImpl.getPageTitle( siteID=" + siteID + ", pageID=" + pageID + " )" );
             return "";
         }
     }
@@ -217,11 +219,11 @@ public class SakaiProxyImpl implements SakaiProxy
                 siteService.save( site );
             }
         }
-        catch( Exception ex )
+        catch( IdUnusedException | PermissionException ex )
         {
             // Error log
-            log.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            log.error( "SakaiProxyImpl.setEZProxyEntry( " + entry.toString() + " )" );
+            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
+            LOG.error( "SakaiProxyImpl.setEZProxyEntry( " + entry.toString() + " )" );
         }
     }
 
@@ -294,7 +296,7 @@ public class SakaiProxyImpl implements SakaiProxy
             if( configured )
             {
                 // Frame height
-                entries = new ArrayList<EZProxyEntry>();
+                entries = new ArrayList<>();
                 EZProxyEntry e = new EZProxyEntry();
                 e.setSiteID( siteID );
                 e.setPageID( pageID );
@@ -333,8 +335,8 @@ public class SakaiProxyImpl implements SakaiProxy
         catch( Exception ex )
         {
             // Error log
-            log.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            log.error( "SakaiProxyImpl.getEZProxyEntry( siteID=" + siteID + ", pageID=" + pageID + " )" );
+            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
+            LOG.error( "SakaiProxyImpl.getEZProxyEntry( siteID=" + siteID + ", pageID=" + pageID + " )" );
             return null;
         }
     }
@@ -350,7 +352,7 @@ public class SakaiProxyImpl implements SakaiProxy
 
         if( type != null )
         {
-            if( allowedRoles.contains( type ) )
+            if( allowedRoles.contains( type ) || securityService.isSuperUser() )
             {
                 retVal = true;
             }
@@ -496,7 +498,7 @@ public class SakaiProxyImpl implements SakaiProxy
      */
     public void init()
     {
-        log.info( "init" );
+        LOG.info( "init" );
 
         // Register the EZProxy configuration permission (if it hasn't been already)
         List<String> registeredPermissions = functionManager.getRegisteredFunctions( "ezproxy" );
@@ -509,8 +511,8 @@ public class SakaiProxyImpl implements SakaiProxy
         try { allowedRoles = Arrays.asList( serverConfigurationService.getStrings( SAKAI_PROP_ALLOWED_VIEW_ROLES ) ); }
         catch( Exception ex ) 
         { 
-            log.error( "sakai.property not found: ezproxy.allow.view - " + ex.getMessage() );
-            allowedRoles = new ArrayList<String>(); 
+            LOG.error( "sakai.property not found: ezproxy.allow.view - " + ex.getMessage() );
+            allowedRoles = new ArrayList<>(); 
         }
     }
 

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ezproxy</artifactId>
         <groupId>ca.uwo.owl</groupId>
-        <version>1.3.0</version>
+        <version>1.4.0</version>
     </parent>
 
     <name>ezproxy - Components</name>
@@ -24,9 +24,7 @@
             <groupId>ca.uwo.owl</groupId>
         <artifactId>ezproxy-impl</artifactId>
         </dependency>
-
     </dependencies>
 
     <build />
-
 </project>

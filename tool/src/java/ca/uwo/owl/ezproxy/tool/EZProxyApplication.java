@@ -19,7 +19,7 @@ public class EZProxyApplication extends WebApplication
 {
     @Override
     protected void init()
-    {	
+    {
         //Configure for Spring injection
         getComponentInstantiationListeners().add( new SpringComponentInjector( this ) );
 
@@ -36,44 +36,25 @@ public class EZProxyApplication extends WebApplication
         // On Wicket session timeout, redirect to main page
         getApplicationSettings().setPageExpiredErrorPage( ContentPage.class );
         getApplicationSettings().setAccessDeniedPage( ContentPage.class );
-		
-		// Throw RuntimeExceptions so they are caught by the Sakai ErrorReportHandler
-		getRequestCycleListeners().add(new AbstractRequestCycleListener()
-		{
-			@Override
-			public IRequestHandler onException(RequestCycle cycle, Exception ex)
-			{
-				// the wicket 1.4 equivalent of this method would just throw (see commented out newRequestCycle() below)
-				
-				if (ex instanceof RuntimeException)
-				{
-					throw (RuntimeException) ex;
-				}
-				return null;
-			}
-		});
+
+        // Throw RuntimeExceptions so they are caught by the Sakai ErrorReportHandler
+        getRequestCycleListeners().add(new AbstractRequestCycleListener()
+        {
+            @Override
+            public IRequestHandler onException(RequestCycle cycle, Exception ex)
+            {
+                // the wicket 1.4 equivalent of this method would just throw (see commented out newRequestCycle() below)
+
+                if (ex instanceof RuntimeException)
+                {
+                    throw (RuntimeException) ex;
+                }
+                return null;
+            }
+        });
 
         //to put this app into deployment mode, see web.xml
     }
-
-    /**
-     *  Throw RuntimeExceptions so they are caught by the Sakai ErrorReportHandler(non-Javadoc)
-     *  
-     * @return 
-     * @see org.apache.wicket.protocol.http.WebApplication#newRequestCycle(org.apache.wicket.Request, org.apache.wicket.Response)
-     */
-    /*@Override
-    public RequestCycle newRequestCycle( Request request, Response response )
-    {
-        return new WebRequestCycle( this, (WebRequest)request, (WebResponse)response )
-        {
-            @Override
-            public Page onRuntimeException( Page page, RuntimeException e )
-            {
-                throw e;
-            }
-        };
-    }*/
 
     /**
      * The main page for our app
@@ -87,9 +68,8 @@ public class EZProxyApplication extends WebApplication
         return ContentPage.class;
     }
 
-
     /**
      * Constructor
      */
-    public EZProxyApplication()	{}
+    public EZProxyApplication() {}
 }

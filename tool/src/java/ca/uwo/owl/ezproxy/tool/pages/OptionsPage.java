@@ -35,17 +35,14 @@ import ca.uwo.owl.ezproxy.utilities.EZProxyConstants;
 public class OptionsPage extends BasePage
 {
     // Class members
-    private static final Logger log 				= Logger.getLogger( OptionsPage.class );	// The logger
-    private static final int 	MIN_CUSTOM_HEIGHT 	= 20;										// The minimum value allowed for custom frame height
-    private static final int 	MAX_CUSTOM_HEIGHT 	= 9999;										// The maximum value allowed for custom frame height
+    private static final Logger LOG                 = Logger.getLogger( OptionsPage.class );    // The logger
+    private static final int    MIN_CUSTOM_HEIGHT   = 20;                                       // The minimum value allowed for custom frame height
+    private static final int    MAX_CUSTOM_HEIGHT   = 9999;                                     // The maximum value allowed for custom frame height
 
     // Constructor
     public OptionsPage() 
-    {		
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "OptionsPage()" );
-        }
+    {
+        LOG.debug( "OptionsPage()" );
 
         // Disable the options link, get the siteID, pageID, tool title
         disableLink( optionsLink );
@@ -110,8 +107,8 @@ public class OptionsPage extends BasePage
                 : new ResourceModel( "heading.notAuthorized" ) ) );	// False...
 
         // Create the form and set the model
-        final Form<EZProxyInputModel> configForm = new Form<EZProxyInputModel>( "configureEZProxyLinkForm" );
-        configForm.setModel( new CompoundPropertyModel<EZProxyInputModel>( new EZProxyInputModel() ) );
+        final Form<EZProxyInputModel> configForm = new Form<>( "configureEZProxyLinkForm" );
+        configForm.setModel( new CompoundPropertyModel<>( new EZProxyInputModel() ) );
 
         // Add the tool title label and input
         configForm.add( new Label( "toolTitleLabel", new ResourceModel( "toolTitle" ) ) );
@@ -124,7 +121,7 @@ public class OptionsPage extends BasePage
                 .add( AttributeModifier.replace( "value", pageTitle ) ) );
 
         // Get all the frame height drop down options
-        List<String> frameHeightOptions = new ArrayList<String>();
+        List<String> frameHeightOptions = new ArrayList<>();
         for( int i = 1; i < 10; ++i )
         {
             ResourceModel model = new ResourceModel( "frameHeight.option" + i );
@@ -137,16 +134,16 @@ public class OptionsPage extends BasePage
         holder.setOutputMarkupId( true );
         container.setOutputMarkupId( true );
         configForm.add( new Label( "frameHeightLabel", new ResourceModel( "frameHeight" ) ) );
-        final Model<String> ddModel = new Model<String>();
+        final Model<String> ddModel = new Model<>();
         if( frameHeight != null && !frameHeight.isEmpty() )
         {
             ddModel.setObject( frameHeightOptions.get( frameHeightOptions.indexOf( frameHeight ) ) );
         }
-        else		
+        else
         {
             ddModel.setObject( frameHeightOptions.get( 0 ) );
         }
-        DropDownChoice<String> ddFrameHeightOptions = new DropDownChoice<String>( "ddFrameHeight", ddModel, frameHeightOptions );
+        DropDownChoice<String> ddFrameHeightOptions = new DropDownChoice<>( "ddFrameHeight", ddModel, frameHeightOptions );
         ddFrameHeightOptions.add( new AjaxFormComponentUpdatingBehavior( "onchange" )
         {
             private static final long serialVersionUID = 1L;
@@ -182,14 +179,14 @@ public class OptionsPage extends BasePage
         {
             container.add( new TextField<Integer>( "txtCustomHeight" )
                     .setRequired( true ).setType( Integer.class )
-                    .add( new RangeValidator<Integer>( MIN_CUSTOM_HEIGHT, MAX_CUSTOM_HEIGHT ) )
+                    .add( new RangeValidator<>( MIN_CUSTOM_HEIGHT, MAX_CUSTOM_HEIGHT ) )
                     .add( AttributeModifier.replace( "value", customHeight ) ) );
             container.setVisibilityAllowed( true );
 
         }
         else
         {
-            container.add( new TextField<String>( "txtCustomHeight" ) );
+            container.add( new TextField<>( "txtCustomHeight" ) );
             container.setVisibilityAllowed( false );
         }
         container.add( new Label( "customHeightUnitLabel", new ResourceModel( "frameHeight.custom.unit" ) ) ); // unit is pixels
@@ -198,11 +195,11 @@ public class OptionsPage extends BasePage
 
         // Add the source url label and input
         configForm.add( new Label( "sourceURLLabel", new ResourceModel( "url" ) ) );
-        TextField<String> urlField = new TextField<String>( "txtSourceURL" );
+        TextField<String> urlField = new TextField<>( "txtSourceURL" );
         urlField.setRequired( true );
         urlField.add( AttributeModifier.replace( "value", url ) );
         configForm.add( urlField );
-        
+
         // Determine if previously saved URL (or default text) is HTTPS
         boolean isHTTPS = false;
         if( url.toLowerCase().startsWith( EZProxyConstants.URL_PROTOCOL_HTTPS ) )
@@ -226,7 +223,7 @@ public class OptionsPage extends BasePage
             {
                 checked = true;
             }
-            
+
             // If the previously saved URL is set to open in a new window AND is HTTP, check the box and disable it
             // OR, if the previously saved URL is NOT set to open in a new window AND is HTTP, check the box and disable it
             else if( ("true".equalsIgnoreCase( newWindow ) && !isHTTPS)
@@ -235,7 +232,7 @@ public class OptionsPage extends BasePage
                 checked = true;
                 disabled = true;
             }
-            
+
             if( checked )
             {
                 chk.add( AttributeModifier.replace( "checked", "checked" ) );
@@ -251,7 +248,7 @@ public class OptionsPage extends BasePage
         }
         checkboxHolder.add( chk );
         checkboxHolder.add( chkLabel );
-        
+
         // Plaintext URL warning message
         final WebMarkupContainer warningHolder = new WebMarkupContainer( "warningHolder" );
         warningHolder.setOutputMarkupId( true );
@@ -322,7 +319,7 @@ public class OptionsPage extends BasePage
                 }
             }
         };
-        
+
         btnUpdate.add( AttributeModifier.replace( "value", new ResourceModel( "update" ).getObject() ) );
         if( urlValidator.isValid( url ) )
         {
@@ -345,7 +342,7 @@ public class OptionsPage extends BasePage
                 setResponsePage( ContentPage.class );
             }
         };
-        
+
         btnCancel.setDefaultFormProcessing( false );
         if( !firstRun )
         {
@@ -381,7 +378,7 @@ public class OptionsPage extends BasePage
                         chk.setEnabled( false );
                         chkLabel.add( AttributeModifier.replace( "class", "disabled" ) );
                     }
-                    
+
                     // Otherwise (for HTTPS, or any invalid protocol/URL), hide the warning and enable the checkbox
                     // (invalid protocols/URLs will not be allowed via browser and server validation)
                     else

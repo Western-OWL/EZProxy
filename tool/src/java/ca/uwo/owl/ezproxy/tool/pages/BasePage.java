@@ -15,10 +15,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
@@ -40,8 +37,8 @@ import ca.uwo.owl.ezproxy.logic.SakaiProxy;
 public class BasePage extends WebPage implements IHeaderContributor
 {
     // Class members
-    private static final Logger log = Logger.getLogger( BasePage.class );	// The logger 
-    protected static final int NUM_ENTRIES_PER_LINK = 4;					// The number of rows per EZProxy link in the database
+    private static final Logger LOG = Logger.getLogger( BasePage.class );   // The logger 
+    protected static final int NUM_ENTRIES_PER_LINK = 4;                    // The number of rows per EZProxy link in the database
     protected static final String EZPROXY_CSS = "styles/ezproxy.css";
 
     // Bean that provides access to sakai API
@@ -55,8 +52,8 @@ public class BasePage extends WebPage implements IHeaderContributor
     // Constructor
     public BasePage()
     {
-        log.debug( "BasePage()" );
-		add(new DebugBar("debug"));
+        LOG.debug( "BasePage()" );
+        add(new DebugBar("debug"));
 
         // Create the options link
         optionsLink = new Link<Void>( "optionsLink" )
@@ -81,7 +78,6 @@ public class BasePage extends WebPage implements IHeaderContributor
             optionsLink.add( new AttributeModifier( "title", new ResourceModel( "optionsLink.tooltip" ) ) );
         }
         add( optionsLink );
-
 
         // Add a FeedbackPanel for displaying our messages
         feedbackPanel = new FeedbackPanel( "feedback" )
@@ -127,23 +123,24 @@ public class BasePage extends WebPage implements IHeaderContributor
      * This block adds the required wrapper markup to style it like a Sakai tool. 
      * Add to this any additional CSS or JS references that you need.
      * 
+     * @param response
      */
     @Override
     public void renderHead( IHeaderResponse response )
     {
-		super.renderHead(response);
-		
-		//get the Sakai skin header fragment from the request attribute
-		HttpServletRequest request = (HttpServletRequest)getRequest().getContainerRequest();
-		
-		response.render(StringHeaderItem.forString((String)request.getAttribute("sakai.html.head")));
-		response.render(OnLoadHeaderItem.forScript("setMainFrameHeight( window.name )"));
+        super.renderHead(response);
+
+        //get the Sakai skin header fragment from the request attribute
+        HttpServletRequest request = (HttpServletRequest)getRequest().getContainerRequest();
+
+        response.render(StringHeaderItem.forString((String)request.getAttribute("sakai.html.head")));
+        response.render(OnLoadHeaderItem.forScript("setMainFrameHeight( window.name )"));
 
         // Tool additions (at end so we can override if required)
         response.render(StringHeaderItem.forString( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />" ));
         
         // Tool CSS
-		response.render(CssHeaderItem.forUrl(EZPROXY_CSS));
+        response.render(CssHeaderItem.forUrl(EZPROXY_CSS));
     }
 
     /** 
@@ -152,7 +149,7 @@ public class BasePage extends WebPage implements IHeaderContributor
      */
     protected void disableLink( Link<Void> l ) 
     {
-        l.add( new AttributeAppender( "class", new Model<String>( "current" ), " ") );
+        l.add( new AttributeAppender( "class", new Model<>( "current" ), " ") );
         l.setRenderBodyOnly( true );
         l.setEnabled( false );
     }

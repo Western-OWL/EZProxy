@@ -18,22 +18,22 @@ import org.sakaiproject.entitybroker.entityprovider.extension.Formats;
  */
 public interface EZProxyEntityProvider extends EntityProvider
 {
-	// Publicly available static string defining the entity prefix for EZProxy entities
-	public final static String ENTITY_PREFIX = "ezproxy";
-	
-	// Publicly available static string array defining the handled output formats
-	public final static String[] HANDLED_OUTPUT_FORMATS = new String[] { Formats.HTML };
-    
+    // Publicly available static string defining the entity prefix for EZProxy entities
+    public final static String ENTITY_PREFIX = "ezproxy";
+
+    // Publicly available static string array defining the handled output formats
+    public final static String[] HANDLED_OUTPUT_FORMATS = new String[] { Formats.HTML };
+
     // Publicly available static string defining the character used to seperate the site and page IDs in the entity ID
     public final static String ENTITY_SITE_ID_PAGE_ID_SEPERATOR = ":";
-    
+
     public static final String EZPROXY_ENTITY_PAGE_URL = "url";
-    
+
     public static final String EZPROXY_ENTITY_PAGE_TITLE = "pageTitle";
-    
+
     public static final String EZPROXY_ENTITY_TOOL_TITLE = "toolTitle";
-    
+
     public static final String EZPROXY_ENTITY_URL = "exproxyURL";
-    
+
     public static final String EZPROXY_ENTITY_TITLE = "title";
 }

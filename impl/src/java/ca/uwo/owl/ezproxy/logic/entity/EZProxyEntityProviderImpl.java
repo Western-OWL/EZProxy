@@ -56,14 +56,14 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
                                     PropertyProvideable, Resolvable, Outputable, RESTful, Redirectable, ActionsExecutable
 {
     // Class members
-    private static final Log            log             = LogFactory.getLog( EZProxyEntityProviderImpl.class );     // The logger
+    private static final Log            LOG             = LogFactory.getLog( EZProxyEntityProviderImpl.class );     // The logger
     private static final String         TOOL_PERM_NAME  = "ezproxy.configure";                                      // EZProxy configuration permission name
     private static final String         TOOL_REG_NAME   = "sakai.ezproxy";                                          // The name of the tool registration
     private static final String         SERVICE_URL     = ServerConfigurationService.getString( "ezproxy.url" );    // The EZProxy service URL
     private static final String         SHARED_SECRET   = ServerConfigurationService.getString( "ezproxy.secret" ); // The EZProxy shared secret
-    private static final String[]       schemes         = { EZProxyConstants.URL_PROTOCOL_HTTP, EZProxyConstants.URL_PROTOCOL_HTTPS }; // The list of valid protocols for URL validation
-    private static final UrlValidator   urlValidator    = new UrlValidator( schemes );                              // The URL validator object
-    private static List<String>         allowedRoles    = new ArrayList<String>();                                  // The list of allowed roles from sakai.properties
+    private static final String[]       SCHEMES         = { EZProxyConstants.URL_PROTOCOL_HTTP, EZProxyConstants.URL_PROTOCOL_HTTPS }; // The list of valid protocols for URL validation
+    private static final UrlValidator   URL_VALIDATOR   = new UrlValidator( SCHEMES );                              // The URL validator object
+    private static List<String>         allowedRoles    = new ArrayList<>();                                  // The list of allowed roles from sakai.properties
 
     private static final String SAK_PROP_ALLOWED_ROLES = "ezproxy.allow.view";
 
@@ -76,14 +76,11 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Override
     public List<String> findEntityRefs( String[] prefixes, String[] name, String[] searchValue, boolean exactMatch ) 
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "findEntityRefs()" );
-        }
+        LOG.debug( "findEntityRefs()" );
 
         String siteID = null;
         String userID = null;
-        List<String> retVal = new ArrayList<String>();
+        List<String> retVal = new ArrayList<>();
 
         // If the provided prefix is that of the ezproxy prefix...
         if( ENTITY_PREFIX.equals( prefixes[0] ) )
@@ -120,7 +117,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
                         if( !securityService.unlock( userID, TOOL_PERM_NAME, siteService.siteReference( siteID ) ) )
                         {
                             // Log the message that this user doesn't have the permision for the site, return an empty list
-                            log.error( "User (" + userID + ") does not have permission (" + TOOL_PERM_NAME + ") for site: " + siteID );
+                            LOG.error( "User (" + userID + ") does not have permission (" + TOOL_PERM_NAME + ") for site: " + siteID );
                             return retVal;
                         }
 
@@ -142,7 +139,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
                                     // If the sourceURL for this EZProxy instance is NOT null, NOT 'n/a', NOT 'https://' AND NOT 'http://',
                                     // this instance has been initialized with a valid URL, so add it to the list of entity refs to return
                                     String sourceURL = getPropertyValue( refString, EZPROXY_ENTITY_URL );
-                                    if( sourceURL != null && urlValidator.isValid( sourceURL ) )
+                                    if( sourceURL != null && URL_VALIDATOR.isValid( sourceURL ) )
                                     {
                                         retVal.add( refString );
                                     }
@@ -164,13 +161,10 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Override
     public Map<String, String> getProperties( String reference )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getProperties()" );
-        }
+        LOG.debug( "getProperties()" );
 
         // Return value
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<>();
 
         // If the reference is invalid, throw an exception and exit
         if( reference == null || reference.length() < 1 )
@@ -206,10 +200,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Override
     public String getPropertyValue( String reference, String name )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getPropertyValue()" );
-        }
+        LOG.debug( "getPropertyValue()" );
 
         String retVal = null;
 
@@ -229,10 +220,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Override
     public Object getEntity( EntityReference ref )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getEntity()" );
-        }
+        LOG.debug( "getEntity()" );
 
         try
         {
@@ -252,7 +240,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
                 requestGetter.getResponse().sendRedirect( "/direct/" + ENTITY_PREFIX + "/" + ref.getId() + "/viewHTML" );
             }
         }
-        catch( IOException ex ) { log.error( ex ); }
+        catch( IOException ex ) { LOG.error( ex ); }
 
         return ref;
     }
@@ -263,10 +251,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Override
     public boolean entityExists( String id )
     { 
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "entityExists()" );
-        }
+        LOG.debug( "entityExists()" );
 
         // If the id is invalid, throw an exception and exit
         if( id == null )
@@ -292,10 +277,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @EntityCustomAction( action = "viewHTML", viewKey = EntityView.VIEW_SHOW )
     public Object getEZProxyEntityAsHTML( EntityReference ref )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getEZProxyEntityAsHTML()" );
-        }
+        LOG.debug( "getEZProxyEntityAsHTML()" );
 
         // Return the generated HTML
         return new ActionReturn( Formats.UTF_8, Formats.HTML_MIME_TYPE, createEZProxyEntityHTML( (EZProxyEntity) getEZProxyEntity( ref.getId() ) ) );
@@ -312,10 +294,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @EntityURLRedirect( "/{prefix}/{id}/redirect" )
     public String redirectEZProxyEntity( Map<String, String> vars )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "redirectEZProxyEntity()" );
-        }
+        LOG.debug( "redirectEZProxyEntity()" );
 
         // Get the entity & userEid
         EZProxyEntity entity = (EZProxyEntity) getEZProxyEntity( vars.get( "id" ) );
@@ -345,10 +324,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Override
     public String getEntityPrefix()
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getEntityPrefix()" );
-        }
+        LOG.debug( "getEntityPrefix()" );
 
         return EZProxyEntityProvider.ENTITY_PREFIX;
     }
@@ -359,10 +335,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Override
     public Object getSampleEntity()
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getSampleEntity()" );
-        }
+        LOG.debug( "getSampleEntity()" );
 
         return new EZProxyEntity();
     }
@@ -373,10 +346,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
     @Override
     public String[] getHandledOutputFormats()
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getHandledOutputFormats()" );
-        }
+        LOG.debug( "getHandledOutputFormats()" );
 
         return EZProxyEntityProvider.HANDLED_OUTPUT_FORMATS;
     }
@@ -389,10 +359,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
      */
     private EZProxyEntity getEZProxyEntity( String id )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getEZProxyEntity()" );
-        }
+        LOG.debug( "getEZProxyEntity()" );
 
         // Return value
         EZProxyEntity retVal = null;
@@ -448,10 +415,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
      */
     private EZProxyEntity getEZProxyEntity( Site site, SitePage page, ToolConfiguration config )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "getEZProxyEntity()" );
-        }
+        LOG.debug( "getEZProxyEntity()" );
 
         if( site == null )
         {
@@ -489,19 +453,17 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
      */
     private boolean isCurrentUserViewAuth()
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "isCurrentUserViewAuth()" );
-        }
+        LOG.debug( "isCurrentUserViewAuth()" );
 
         // Get the user's type
         boolean retVal = false ;
         String type = userDirectoryService.getCurrentUser().getType().toLowerCase();
 
-        // If the users's type is in the list of allowed roles, they're allowed to view the EZProxy link; otherwise they're not
+        // If the users's type is in the list of allowed roles, OR if they're an admin
+        // they're allowed to view the EZProxy link; otherwise they're not
         if( type != null )
         {
-            if( allowedRoles.contains( type ) )
+            if( allowedRoles.contains( type ) || securityService.isSuperUser() )
             {
                 retVal = true;
             }
@@ -518,16 +480,12 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
      */
     private String generateFinalEZProxyURL( EZProxyEntity entity, String userEid )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "generateFinalEZProxyURL()" );
-        }
+        LOG.debug( "generateFinalEZProxyURL()" );
 
         // Generate the MAC and the final URL
         String mac = "";
-        try { mac = SharedSecretAuth.generateMAC( userEid + entity.getSiteID(), SHARED_SECRET );	}
-        catch( NoSuchAlgorithmException ex ) { log.error( ex ); }
-        catch( IndexOutOfBoundsException ex ) { log.error( ex ); }
+        try { mac = SharedSecretAuth.generateMAC( userEid + entity.getSiteID(), SHARED_SECRET );}
+        catch( NoSuchAlgorithmException | IndexOutOfBoundsException ex ) { LOG.error( ex ); }
         return SERVICE_URL + "?mac=" + mac + "&pid=" + userEid + "&lcid=" + entity.getSiteID() + "&url=" + entity.getSourceURL();
     }
 
@@ -539,10 +497,7 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
      */
     private String createEZProxyEntityHTML( EZProxyEntity entity )
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "createEZProxyEntityHTML()" );
-        }
+        LOG.debug( "createEZProxyEntityHTML()" );
 
         StringBuilder sb = new StringBuilder();
         sb.append( resourceLoader.getFormattedMessage( "htmlHeader", new Object[] { ServerConfigurationService.getString( "skin.repo" ) + "/tool_base.css" } ) );
@@ -593,17 +548,14 @@ public class EZProxyEntityProviderImpl implements EZProxyEntityProvider, CoreEnt
      */
     public void init()
     {
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "init" );
-        }
+        LOG.debug( "init" );
 
         // Get the list of allowed system roles to view an ezproxy link
         try { allowedRoles = Arrays.asList( ServerConfigurationService.getStrings( SAK_PROP_ALLOWED_ROLES ) ); }
         catch( Exception ex ) 
         {
-            log.error( "sakai.property not found: ezproxy.allow.view - " + ex.getMessage() );
-            allowedRoles = new ArrayList<String>();
+            LOG.error( "sakai.property not found: ezproxy.allow.view - " + ex.getMessage() );
+            allowedRoles = new ArrayList<>();
         }
     }
 }

@@ -30,14 +30,14 @@ import org.apache.wicket.request.resource.ContextRelativeResource;
 public class ContentPage extends BasePage implements IHeaderContributor
 {
     // Class memebers
-    private static final Logger log = Logger.getLogger( ContentPage.class );	// The logger
+    private static final Logger LOG = Logger.getLogger( ContentPage.class );    // The logger
 
     // Instance members
-    boolean isConfigured 	= false;	// Is this EZProxy link configured
-    boolean newWindow 		= false;	// Is this EZProxy link set to open in a new window/tab
-    boolean propsNotFound 	= true;		// Were the EZProxy sakai.properties present/valid
-    String  finalURL 		= "";		// Holds the final (generated) URL
-    
+    boolean isConfigured    = false;    // Is this EZProxy link configured
+    boolean newWindow       = false;    // Is this EZProxy link set to open in a new window/tab
+    boolean propsNotFound   = true;     // Were the EZProxy sakai.properties present/valid
+    String  finalURL        = "";       // Holds the final (generated) URL
+
     private static final String SAK_PROP_EZPROXY_SERVICE_URL = "ezproxy.url";
     private static final String SAK_PROP_EZPROXY_SHARED_SECTRET = "ezproxy.secret";
 
@@ -128,8 +128,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
                 {
                     // Generate the MAC, and the final URL
                     try { mac = SharedSecretAuth.generateMAC( userEid + siteID, sharedSecret );	}
-                    catch( NoSuchAlgorithmException ex ) { log.error( ex ); }
-                    catch( IndexOutOfBoundsException ex ) { log.error( ex ); }
+                    catch( NoSuchAlgorithmException | IndexOutOfBoundsException ex ) { LOG.error( ex ); }
                     finalURL = serviceURL + "?mac=" + mac + "&pid=" + userEid + "&lcid=" + siteID + "&url=" + destinationURL;
 
                     // If it's configured to open in the iframe...
@@ -154,9 +153,9 @@ public class ContentPage extends BasePage implements IHeaderContributor
                         iframe.setVisibilityAllowed( true );
                         iframe.add( AttributeModifier.replace( "src", finalURL ) );
                         iframe.add( AttributeModifier.replace( "height", 
-                                ( new ResourceModel( "frameHeight.option9" ).getObject().equalsIgnoreCase( frameHeight ) ) 	// If... (frameHeight.option9 = 'Something else')
-                                ? customHeight 																				// True...
-                                : frameHeight ) );																			// False...
+                                ( new ResourceModel( "frameHeight.option9" ).getObject().equalsIgnoreCase( frameHeight ) )  // If... (frameHeight.option9 = 'Something else')
+                                ? customHeight                                                                              // True...
+                                : frameHeight ) );                                                                          // False...
 
                         // Set the image icon to blank (it's been configured, they're allowed to see it, and it opens in the same page)
                         imageIcon = new NonCachingImage( "icon" );

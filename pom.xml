@@ -47,14 +47,14 @@
                 <groupId>org.apache.wicket</groupId>
                 <artifactId>wicket</artifactId>
                 <version>6.19.0</version>
-				<type>pom</type>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.wicket</groupId>
                 <artifactId>wicket-spring</artifactId>
                 <version>6.19.0</version>
             </dependency>
-			<dependency>
+            <dependency>
                 <groupId>org.apache.wicket</groupId>
                 <artifactId>wicket-devutils</artifactId>
                 <version>6.19.0</version>
@@ -72,13 +72,13 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>0.11.6</version>
+                <version>${sakai.lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring</artifactId>
-                <version>2.5.6.SEC02</version>
+                <artifactId>spring-orm</artifactId>
+                <version>${sakai.spring.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -100,7 +100,6 @@
             <!-- sakai dependencies -->
         </dependencies>
     </dependencyManagement>
-
 
     <repositories>
         <repository>
@@ -168,8 +167,6 @@
             <url>http://oss.sonatype.org/content/repositories/github-releases</url>
         </pluginRepository>
     </pluginRepositories>
-
-
 
     <modules>
         <module>tool</module>
