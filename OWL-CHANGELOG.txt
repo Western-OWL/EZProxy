@@ -1,3 +1,5 @@
+2017.01.16:
+	- [EZP-37] port to sakai 11, upgrade to spring 4
 2015.06.04:
         - [EZP-35] Upgrade Wicket to version 6.19.0
 2015.03.25:
