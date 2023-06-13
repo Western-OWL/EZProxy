@@ -3,8 +3,9 @@ package ca.uwo.owl.ezproxy.tool.pages;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.log4j.Logger;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -25,6 +26,7 @@ import ca.uwo.owl.ezproxy.model.EZProxyEntry;
 import ca.uwo.owl.ezproxy.tool.model.EZProxyInputModel;
 import ca.uwo.owl.ezproxy.utilities.EZProxyConstants;
 
+
 /**
  * The 'options' page, so the user can edit the configuration of the EZProxy link.
  * 
@@ -32,17 +34,17 @@ import ca.uwo.owl.ezproxy.utilities.EZProxyConstants;
  * @author plukasew
  *
  */
+@Slf4j
 public class OptionsPage extends BasePage
 {
     // Class members
-    private static final Logger LOG                 = Logger.getLogger( OptionsPage.class );    // The logger
     private static final int    MIN_CUSTOM_HEIGHT   = 20;                                       // The minimum value allowed for custom frame height
     private static final int    MAX_CUSTOM_HEIGHT   = 9999;                                     // The maximum value allowed for custom frame height
 
     // Constructor
     public OptionsPage() 
     {
-        LOG.debug( "OptionsPage()" );
+        log.debug( "OptionsPage()" );
 
         // Disable the options link, get the siteID, pageID, tool title
         disableLink( optionsLink );

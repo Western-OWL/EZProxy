@@ -2,7 +2,8 @@ package ca.uwo.owl.ezproxy.tool.pages;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -34,10 +35,10 @@ import ca.uwo.owl.ezproxy.logic.SakaiProxy;
  * @author plukasew
  *
  */
+@Slf4j
 public class BasePage extends WebPage implements IHeaderContributor
 {
     // Class members
-    private static final Logger LOG = Logger.getLogger( BasePage.class );   // The logger 
     protected static final int NUM_ENTRIES_PER_LINK = 4;                    // The number of rows per EZProxy link in the database
     protected static final String EZPROXY_CSS = "styles/ezproxy.css";
 
@@ -52,7 +53,7 @@ public class BasePage extends WebPage implements IHeaderContributor
     // Constructor
     public BasePage()
     {
-        LOG.debug( "BasePage()" );
+        log.debug( "BasePage()" );
         add(new DebugBar("debug"));
 
         // Create the options link

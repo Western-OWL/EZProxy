@@ -3,7 +3,8 @@ package ca.uwo.owl.ezproxy.tool.pages;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -27,11 +28,9 @@ import org.apache.wicket.request.resource.ContextRelativeResource;
  * @author Brian Jones (bjones86@uwo.ca)
  *
  */
+@Slf4j
 public class ContentPage extends BasePage implements IHeaderContributor
 {
-    // Class memebers
-    private static final Logger LOG = Logger.getLogger( ContentPage.class );    // The logger
-
     // Instance members
     boolean isConfigured    = false;    // Is this EZProxy link configured
     boolean newWindow       = false;    // Is this EZProxy link set to open in a new window/tab
@@ -128,7 +127,7 @@ public class ContentPage extends BasePage implements IHeaderContributor
                 {
                     // Generate the MAC, and the final URL
                     try { mac = SharedSecretAuth.generateMAC( userEid + siteID, sharedSecret );	}
-                    catch( NoSuchAlgorithmException | IndexOutOfBoundsException ex ) { LOG.error( ex ); }
+                    catch( NoSuchAlgorithmException | IndexOutOfBoundsException ex ) { log.error( ex.getMessage() ); }
                     finalURL = serviceURL + "?mac=" + mac + "&pid=" + userEid + "&lcid=" + siteID + "&url=" + destinationURL;
 
                     // If it's configured to open in the iframe...

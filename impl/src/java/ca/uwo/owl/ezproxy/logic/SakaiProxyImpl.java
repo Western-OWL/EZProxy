@@ -6,8 +6,8 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-import org.apache.log4j.Logger;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -33,10 +33,10 @@ import org.sakaiproject.exception.PermissionException;
  * @author Brian Jones (bjones86@uwo.ca)
  *
  */
+@Slf4j
 public class SakaiProxyImpl implements SakaiProxy
 {
     // Class members
-    private static final Logger     LOG                             = Logger.getLogger( SakaiProxyImpl.class );	// The logger
     private static final String     TOOL_PERM_NAME                  = "ezproxy.configure";	// The name of the permission used to determine access to EZProxy link configuration page
     private static final String     SAKAI_PROP_ALLOWED_VIEW_ROLES   = "ezproxy.allow.view";	// The name of the sakai property holding the allowed view roles
     private static List<String>     allowedRoles                    = new ArrayList<>();
@@ -86,8 +86,8 @@ public class SakaiProxyImpl implements SakaiProxy
         catch( IdUnusedException | PermissionException ex )
         {
             // Error log
-            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            LOG.error( "SakaiProxyImpl.setToolTitle( siteID=" + siteID + ", pageID=" + pageID + ", newToolTitle=" + newToolTitle + " )" );
+            log.error( "Error: {}:{}", ex.getClass(), ex.getMessage() );
+            log.error( "siteID={}, pageID={}, newToolTitle={}", siteID, pageID, newToolTitle );
         }
     }
 
@@ -133,8 +133,8 @@ public class SakaiProxyImpl implements SakaiProxy
         catch( IdUnusedException | PermissionException ex )
         {
             // Error log
-            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            LOG.error( "SakaiProxyImpl.setPageTitle( siteID=" + siteID + ", pageID=" + pageID + ", newPageTitle=" + newPageTitle + " )" );
+            log.error( "Error: {}:{}", ex.getClass(), ex.getMessage() );
+            log.error( "siteID={}, pageID={}, newPageTitle={}", siteID, pageID, newPageTitle );
         }
     }
 
@@ -173,8 +173,8 @@ public class SakaiProxyImpl implements SakaiProxy
         catch( Exception ex )
         {
             // Error log
-            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            LOG.error( "SakaiProxyImpl.getPageTitle( siteID=" + siteID + ", pageID=" + pageID + " )" );
+            log.error( "Error: {}:{}", ex.getClass(), ex.getMessage() );
+            log.error( "siteID={}, pageID={}", siteID, pageID );
             return "";
         }
     }
@@ -222,8 +222,8 @@ public class SakaiProxyImpl implements SakaiProxy
         catch( IdUnusedException | PermissionException ex )
         {
             // Error log
-            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            LOG.error( "SakaiProxyImpl.setEZProxyEntry( " + entry.toString() + " )" );
+            log.error( "Error: {}:{}", ex.getClass(), ex.getMessage() );
+            log.error( "SakaiProxyImpl.setEZProxyEntry({})", entry.toString() );
         }
     }
 
@@ -335,8 +335,8 @@ public class SakaiProxyImpl implements SakaiProxy
         catch( Exception ex )
         {
             // Error log
-            LOG.error( "Error: " + ex.getClass() + ":" + ex.getMessage() );
-            LOG.error( "SakaiProxyImpl.getEZProxyEntry( siteID=" + siteID + ", pageID=" + pageID + " )" );
+            log.error( "Error: {}:{}", ex.getClass(), ex.getMessage() );
+            log.error( "siteID={}, pageID={}", siteID, pageID );
             return null;
         }
     }
@@ -498,7 +498,7 @@ public class SakaiProxyImpl implements SakaiProxy
      */
     public void init()
     {
-        LOG.info( "init" );
+        log.debug( "init" );
 
         // Register the EZProxy configuration permission (if it hasn't been already)
         List<String> registeredPermissions = functionManager.getRegisteredFunctions( "ezproxy" );
@@ -511,7 +511,7 @@ public class SakaiProxyImpl implements SakaiProxy
         try { allowedRoles = Arrays.asList( serverConfigurationService.getStrings( SAKAI_PROP_ALLOWED_VIEW_ROLES ) ); }
         catch( Exception ex ) 
         { 
-            LOG.error( "sakai.property not found: ezproxy.allow.view - " + ex.getMessage() );
+            log.error( "sakai.property not found: ezproxy.allow.view - {}", ex.getMessage() );
             allowedRoles = new ArrayList<>(); 
         }
     }
